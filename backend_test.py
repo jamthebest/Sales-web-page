@@ -429,7 +429,14 @@ class EcommerceAPITester:
             "total_tests": self.tests_run,
             "passed_tests": self.tests_passed,
             "success_rate": f"{(self.tests_passed/self.tests_run*100):.1f}%" if self.tests_run > 0 else "0%",
-            "test_results": self.test_results
+            "test_results": [
+                {
+                    "test": result["test"],
+                    "success": result["success"],
+                    "details": result["details"],
+                    "error": result["error"]
+                } for result in self.test_results
+            ]
         }
 
 def main():
