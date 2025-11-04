@@ -1,0 +1,98 @@
+{
+  "total_tests": 18,
+  "passed_tests": 15,
+  "success_rate": "83.3%",
+  "test_results": [
+    {
+      "test": "GET /auth/me (regular user)",
+      "success": true,
+      "details": "User: Test User (user)",
+      "error": ""
+    },
+    {
+      "test": "GET /auth/me (admin user)",
+      "success": true,
+      "details": "Admin: Admin User (admin)",
+      "error": ""
+    },
+    {
+      "test": "POST /auth/logout",
+      "success": true,
+      "details": "",
+      "error": "Status: 200"
+    },
+    {
+      "test": "GET /products",
+      "success": true,
+      "details": "Found 6 products",
+      "error": ""
+    },
+    {
+      "test": "GET /products/{id}",
+      "success": true,
+      "details": "",
+      "error": "Status: 200"
+    },
+    {
+      "test": "POST /products (admin)",
+      "success": true,
+      "details": "Created product: Producto de Prueba",
+      "error": ""
+    },
+    {
+      "test": "PUT /products/{id} (admin)",
+      "success": true,
+      "details": "",
+      "error": "Status: 200"
+    },
+    {
+      "test": "POST /requests/verify-phone",
+      "success": true,
+      "details": "Mock code: 569110",
+      "error": ""
+    },
+    {
+      "test": "POST /requests/validate-code",
+      "success": true,
+      "details": "",
+      "error": "Status: 200"
+    },
+    {
+      "test": "POST /requests/purchase",
+      "success": true,
+      "details": "",
+      "error": "Status: 200"
+    },
+    {
+      "test": "POST /requests/out-of-stock",
+      "success": true,
+      "details": "",
+      "error": "Status: 200"
+    },
+    {
+      "test": "POST /requests/custom",
+      "success": true,
+      "details": "",
+      "error": "Status: 200"
+    },
+    {
+      "test": "GET /requests (admin)",
+      "success": true,
+      "details": "Total requests: 3",
+      "error": ""
+    },
+    {
+      "test": "GET /config (admin)",
+      "success": true,
+      "details": "",
+      "error": "Status: 200"
+    },
+    {
+      "test": "PUT /config (admin)",
+      "success": true,
+      "details": "",
+      "error": "Status: 200"
+    },
+    {
+      "test": "GET /auth/me (no auth)",
+      "success": 
