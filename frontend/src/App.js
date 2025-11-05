@@ -88,6 +88,7 @@ function App() {
           <Route path="/" element={<Landing user={user} logout={logout} />} />
           <Route path="/products" element={<Products user={user} logout={logout} />} />
           <Route path="/products/:id" element={<ProductDetail user={user} logout={logout} />} />
+          <Route path="/custom-request" element={<CustomRequest user={user} logout={logout} />} />
           <Route 
             path="/admin" 
             element={
