@@ -6,6 +6,7 @@ import Landing from './pages/Landing';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import AdminDashboard from './pages/AdminDashboard';
+import CustomRequest from './pages/CustomRequest';
 import { Toaster } from '@/components/ui/sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
