@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShoppingBag, Package, Plus, Edit, Trash2, Mail, Phone, ShoppingCart, AlertCircle, FileText } from 'lucide-react';
+import { ShoppingBag, Package, Plus, Edit, Trash2, Mail, Phone, ShoppingCart, AlertCircle, FileText, TrendingUp, Inbox } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminDashboard = ({ user, logout }) => {
@@ -25,6 +25,9 @@ const AdminDashboard = ({ user, logout }) => {
     image_url: '',
     category: ''
   });
+  const [showStockDialog, setShowStockDialog] = useState(false);
+  const [stockProduct, setStockProduct] = useState(null);
+  const [stockAmount, setStockAmount] = useState('');
 
   useEffect(() => {
     fetchProducts();
@@ -86,7 +89,7 @@ const AdminDashboard = ({ user, logout }) => {
   };
 
   const handleSaveProduct = async () => {
-    if (!productForm.name || !productForm.price || !productForm.stock) {
+    if (!productForm.name || !productForm.price || productForm.stock === '') {
       toast.error('Completa los campos requeridos');
       return;
     }
@@ -130,6 +133,34 @@ const AdminDashboard = ({ user, logout }) => {
     }
   };
 
+  const handleOpenStockDialog = (product) => {
+    setStockProduct(product);
+    setStockAmount('');
+    setShowStockDialog(true);
+  };
+
+  const handleUpdateStock = async () => {
+    if (!stockAmount || isNaN(stockAmount)) {
+      toast.error('Ingresa una cantidad válida');
+      return;
+    }
+
+    try {
+      const newStock = stockProduct.stock + parseInt(stockAmount);
+      if (newStock < 0) {
+        toast.error('El stock no puede ser negativo');
+        return;
+      }
+
+      await axiosInstance.put(`/products/${stockProduct.id}`, { stock: newStock });
+      toast.success('Stock actualizado');
+      setShowStockDialog(false);
+      fetchProducts();
+    } catch (error) {
+      toast.error('Error al actualizar stock');
+    }
+  };
+
   const handleSaveConfig = async () => {
     try {
       await axiosInstance.put('/config', config);
@@ -138,6 +169,9 @@ const AdminDashboard = ({ user, logout }) => {
       toast.error('Error al guardar configuración');
     }
   };
+
+  const lowStockProducts = products.filter(p => p.stock < 10 && p.stock > 0);
+  const outOfStockProducts = products.filter(p => p.stock === 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50">
@@ -151,7 +185,7 @@ const AdminDashboard = ({ user, logout }) => {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">Hola, {user.name}</span>
-              <Button onClick={() => navigate('/products')} variant="outline" data-testid="nav-products-btn">
+              <Button onClick={() => navigate('/')} variant="outline" data-testid="nav-home-btn">
                 Ver Tienda
               </Button>
               <Button onClick={logout} variant="ghost" data-testid="logout-btn">Cerrar Sesión</Button>
@@ -165,17 +199,22 @@ const AdminDashboard = ({ user, logout }) => {
           Panel de Administración
         </h1>
 
-        <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="products" data-testid="products-tab">Inventario</TabsTrigger>
+        <Tabs defaultValue="inventory" className="w-full">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
+            <TabsTrigger value="inventory" data-testid="inventory-tab">Inventario</TabsTrigger>
+            <TabsTrigger value="stock" data-testid="stock-tab">Gestión Stock</TabsTrigger>
             <TabsTrigger value="requests" data-testid="requests-tab">Solicitudes</TabsTrigger>
+            <TabsTrigger value="custom" data-testid="custom-tab">Solicitudes Especiales</TabsTrigger>
             <TabsTrigger value="config" data-testid="config-tab">Configuración</TabsTrigger>
           </TabsList>
 
-          {/* Products Tab */}
-          <TabsContent value="products" className="space-y-6">
+          {/* Inventory Tab */}
+          <TabsContent value="inventory" className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-800">Productos</h2>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">Productos</h2>
+                <p className="text-gray-600">Total: {products.length} productos</p>
+              </div>
               <Button 
                 onClick={handleCreateProduct}
                 className="bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700"
@@ -204,7 +243,7 @@ const AdminDashboard = ({ user, logout }) => {
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-xl font-bold text-sky-600" data-testid={`admin-product-price-${product.id}`}>${product.price.toFixed(2)}</span>
                       <span className="text-sm font-semibold" data-testid={`admin-product-stock-${product.id}`}>
-                        Stock: <span className={product.stock < 10 ? 'text-red-600' : 'text-emerald-600'}>{product.stock}</span>
+                        Stock: <span className={product.stock === 0 ? 'text-red-600' : product.stock < 10 ? 'text-orange-600' : 'text-emerald-600'}>{product.stock}</span>
                       </span>
                     </div>
                     <div className="flex gap-2">
@@ -233,45 +272,190 @@ const AdminDashboard = ({ user, logout }) => {
             </div>
           </TabsContent>
 
-          {/* Requests Tab */}
+          {/* Stock Management Tab */}
+          <TabsContent value="stock" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Gestión de Existencias</h2>
+              <p className="text-gray-600 mb-6">Actualiza el stock de tus productos y agrega nuevos</p>
+            </div>
+
+            {/* Alerts */}
+            {outOfStockProducts.length > 0 && (
+              <Card className="border-red-200 bg-red-50">
+                <CardHeader>
+                  <CardTitle className="text-red-800 flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5" />
+                    Productos Agotados ({outOfStockProducts.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {outOfStockProducts.map(p => (
+                      <div key={p.id} className="flex justify-between items-center bg-white p-3 rounded-lg">
+                        <span className="font-semibold">{p.name}</span>
+                        <Button 
+                          onClick={() => handleOpenStockDialog(p)}
+                          size="sm"
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          Agregar Stock
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {lowStockProducts.length > 0 && (
+              <Card className="border-orange-200 bg-orange-50">
+                <CardHeader>
+                  <CardTitle className="text-orange-800 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" />
+                    Stock Bajo ({lowStockProducts.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {lowStockProducts.map(p => (
+                      <div key={p.id} className="flex justify-between items-center bg-white p-3 rounded-lg">
+                        <div>
+                          <span className="font-semibold">{p.name}</span>
+                          <span className="text-sm text-gray-600 ml-2">Stock: {p.stock}</span>
+                        </div>
+                        <Button 
+                          onClick={() => handleOpenStockDialog(p)}
+                          size="sm"
+                          className="bg-orange-600 hover:bg-orange-700"
+                        >
+                          Reabastecer
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* All Products Stock */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Todos los Productos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {products.map((product) => (
+                    <div key={product.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-sky-100 to-emerald-100">
+                          {product.image_url ? (
+                            <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Package className="w-8 h-8 text-sky-300" />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-800">{product.name}</h4>
+                          <p className="text-sm text-gray-600">{product.category || 'Sin categoría'}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-sky-600">{product.stock}</p>
+                          <p className="text-xs text-gray-500">unidades</p>
+                        </div>
+                        <Button
+                          onClick={() => handleOpenStockDialog(product)}
+                          variant="outline"
+                          data-testid={`update-stock-btn-${product.id}`}
+                        >
+                          Actualizar
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Button
+              onClick={handleCreateProduct}
+              className="w-full py-6 text-lg bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Agregar Nuevo Producto
+            </Button>
+          </TabsContent>
+
+          {/* Purchase Requests Tab */}
           <TabsContent value="requests" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Solicitudes de Compra</h2>
+              <p className="text-gray-600">Revisa todas las solicitudes realizadas por los clientes</p>
+            </div>
+
             {requests && (
-              <>
-                {/* Purchase Requests */}
-                <Card data-testid="purchase-requests-card">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <ShoppingCart className="w-5 h-5" />
-                      Solicitudes de Compra ({requests.purchase_requests?.length || 0})
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {requests.purchase_requests?.length > 0 ? (
-                      <div className="space-y-4">
-                        {requests.purchase_requests.map((req) => (
-                          <div key={req.id} className="bg-white p-4 rounded-lg border border-gray-200" data-testid={`purchase-request-${req.id}`}>
-                            <div className="grid grid-cols-2 gap-2 text-sm">
-                              <div><span className="font-semibold">Cliente:</span> {req.user_name}</div>
-                              <div><span className="font-semibold">Email:</span> {req.user_email}</div>
-                              <div><span className="font-semibold">Teléfono:</span> {req.user_phone}</div>
-                              <div><span className="font-semibold">Producto:</span> {req.product_name}</div>
-                              <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
-                              <div><span className="font-semibold">Total:</span> ${req.total_price.toFixed(2)}</div>
+              <Card data-testid="purchase-requests-card">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ShoppingCart className="w-5 h-5" />
+                    Solicitudes de Compra ({requests.purchase_requests?.length || 0})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {requests.purchase_requests?.length > 0 ? (
+                    <div className="space-y-4">
+                      {requests.purchase_requests.map((req) => (
+                        <div key={req.id} className="bg-white p-4 rounded-lg border-2 border-gray-200 hover:border-sky-300 transition-colors" data-testid={`purchase-request-${req.id}`}>
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h4 className="font-bold text-lg text-gray-800">{req.product_name}</h4>
+                              <p className="text-sm text-gray-500">{new Date(req.created_at).toLocaleString('es-MX')}</p>
+                            </div>
+                            <span className="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-semibold">
+                              {req.status}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div><span className="font-semibold">Cliente:</span> {req.user_name}</div>
+                            <div><span className="font-semibold">Email:</span> {req.user_email}</div>
+                            <div><span className="font-semibold">Teléfono:</span> {req.user_phone}</div>
+                            <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
+                            <div className="col-span-2">
+                              <span className="font-semibold">Total:</span> 
+                              <span className="text-xl font-bold text-sky-600 ml-2">${req.total_price.toFixed(2)}</span>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-500 text-center py-4">No hay solicitudes de compra</p>
-                    )}
-                  </CardContent>
-                </Card>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <Inbox className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-500">No hay solicitudes de compra</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
 
+          {/* Custom & Out of Stock Requests Tab */}
+          <TabsContent value="custom" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Solicitudes Especiales</h2>
+              <p className="text-gray-600">Productos sin stock y solicitudes personalizadas</p>
+            </div>
+
+            {requests && (
+              <>
                 {/* Out of Stock Requests */}
                 <Card data-testid="outofstock-requests-card">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <AlertCircle className="w-5 h-5" />
+                      <AlertCircle className="w-5 h-5 text-orange-600" />
                       Solicitudes de Artículos Sin Stock ({requests.out_of_stock_requests?.length || 0})
                     </CardTitle>
                   </CardHeader>
@@ -279,9 +463,12 @@ const AdminDashboard = ({ user, logout }) => {
                     {requests.out_of_stock_requests?.length > 0 ? (
                       <div className="space-y-4">
                         {requests.out_of_stock_requests.map((req) => (
-                          <div key={req.id} className="bg-white p-4 rounded-lg border border-orange-200" data-testid={`outofstock-request-${req.id}`}>
+                          <div key={req.id} className="bg-orange-50 p-4 rounded-lg border-2 border-orange-200" data-testid={`outofstock-request-${req.id}`}>
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className="font-bold text-lg text-gray-800">{req.product_name}</h4>
+                              <span className="text-xs text-gray-500">{new Date(req.created_at).toLocaleString('es-MX')}</span>
+                            </div>
                             <div className="grid grid-cols-2 gap-2 text-sm">
-                              <div><span className="font-semibold">Producto:</span> {req.product_name}</div>
                               <div><span className="font-semibold">Teléfono:</span> {req.phone}</div>
                               <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
                               <div><span className="font-semibold">Verificado:</span> {req.verified ? '✅ Sí' : '❌ No'}</div>
@@ -290,7 +477,9 @@ const AdminDashboard = ({ user, logout }) => {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-500 text-center py-4">No hay solicitudes de artículos sin stock</p>
+                      <div className="text-center py-8">
+                        <p className="text-gray-500">No hay solicitudes de artículos sin stock</p>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
@@ -299,7 +488,7 @@ const AdminDashboard = ({ user, logout }) => {
                 <Card data-testid="custom-requests-card">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <FileText className="w-5 h-5" />
+                      <FileText className="w-5 h-5 text-purple-600" />
                       Solicitudes Personalizadas ({requests.custom_requests?.length || 0})
                     </CardTitle>
                   </CardHeader>
@@ -307,9 +496,15 @@ const AdminDashboard = ({ user, logout }) => {
                     {requests.custom_requests?.length > 0 ? (
                       <div className="space-y-4">
                         {requests.custom_requests.map((req) => (
-                          <div key={req.id} className="bg-white p-4 rounded-lg border border-blue-200" data-testid={`custom-request-${req.id}`}>
+                          <div key={req.id} className="bg-purple-50 p-4 rounded-lg border-2 border-purple-200" data-testid={`custom-request-${req.id}`}>
+                            <div className="flex justify-between items-start mb-3">
+                              <span className="text-xs text-gray-500">{new Date(req.created_at).toLocaleString('es-MX')}</span>
+                            </div>
                             <div className="space-y-2 text-sm">
-                              <div><span className="font-semibold">Descripción:</span> {req.description}</div>
+                              <div className="bg-white p-3 rounded">
+                                <span className="font-semibold block mb-1">Descripción:</span>
+                                <p className="text-gray-700">{req.description}</p>
+                              </div>
                               <div className="grid grid-cols-2 gap-2">
                                 <div><span className="font-semibold">Teléfono:</span> {req.phone}</div>
                                 <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
@@ -319,7 +514,9 @@ const AdminDashboard = ({ user, logout }) => {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-500 text-center py-4">No hay solicitudes personalizadas</p>
+                      <div className="text-center py-8">
+                        <p className="text-gray-500">No hay solicitudes personalizadas</p>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
@@ -455,6 +652,45 @@ const AdminDashboard = ({ user, logout }) => {
               {editingProduct ? 'Actualizar Producto' : 'Crear Producto'}
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Stock Update Dialog */}
+      <Dialog open={showStockDialog} onOpenChange={setShowStockDialog}>
+        <DialogContent data-testid="stock-dialog">
+          <DialogHeader>
+            <DialogTitle>Actualizar Stock</DialogTitle>
+          </DialogHeader>
+          {stockProduct && (
+            <div className="space-y-4">
+              <div>
+                <p className="font-semibold text-lg">{stockProduct.name}</p>
+                <p className="text-sm text-gray-600">Stock actual: {stockProduct.stock} unidades</p>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Cantidad a agregar/restar
+                </label>
+                <Input
+                  type="number"
+                  placeholder="Ej: +10 o -5"
+                  value={stockAmount}
+                  onChange={(e) => setStockAmount(e.target.value)}
+                  data-testid="stock-amount-input"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Nuevo stock: {stockProduct.stock + (parseInt(stockAmount) || 0)}
+                </p>
+              </div>
+              <Button
+                onClick={handleUpdateStock}
+                className="w-full bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700"
+                data-testid="confirm-stock-update-btn"
+              >
+                Actualizar Stock
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
