@@ -6,7 +6,6 @@ import Landing from './pages/Landing';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import AdminDashboard from './pages/AdminDashboard';
-import CustomRequest from './pages/CustomRequest';
 import { Toaster } from '@/components/ui/sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -20,23 +19,33 @@ export const axiosInstance = axios.create({
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
 
   useEffect(() => {
     checkSession();
   }, []);
 
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  }, [darkMode]);
+
   const checkSession = async () => {
-    // Check for session_id in URL fragment
     const hash = window.location.hash;
     if (hash && hash.includes('session_id=')) {
       const sessionId = hash.split('session_id=')[1].split('&')[0];
       await processSessionId(sessionId);
-      // Clean URL
       window.history.replaceState(null, '', window.location.pathname);
       return;
     }
 
-    // Check existing session
     try {
       const response = await axiosInstance.get('/auth/me');
       setUser(response.data);
@@ -70,12 +79,16 @@ function App() {
     }
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(prev => !prev);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-teal-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <div className="text-center">
           <div className="inline-block w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-600">Cargando...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Cargando...</p>
         </div>
       </div>
     );
@@ -85,15 +98,14 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Landing user={user} logout={logout} />} />
-          <Route path="/products" element={<Products user={user} logout={logout} />} />
-          <Route path="/products/:id" element={<ProductDetail user={user} logout={logout} />} />
-          <Route path="/custom-request" element={<CustomRequest user={user} logout={logout} />} />
+          <Route path="/" element={<Landing user={user} logout={logout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />} />
+          <Route path="/products" element={<Products user={user} logout={logout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />} />
+          <Route path="/products/:id" element={<ProductDetail user={user} logout={logout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />} />
           <Route 
             path="/admin" 
             element={
               user && user.role === 'admin' ? 
-                <AdminDashboard user={user} logout={logout} /> : 
+                <AdminDashboard user={user} logout={logout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} /> : 
                 <Navigate to="/" replace />
             } 
           />
