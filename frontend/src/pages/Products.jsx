@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../App';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ShoppingBag, Search, Package } from 'lucide-react';
+import { ShoppingBag, Search, Package, Sun, Moon } from 'lucide-react';
 import { toast } from 'sonner';
 
-const Products = ({ user, logout }) => {
+const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
