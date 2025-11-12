@@ -40,11 +40,6 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
     }
   };
 
-  const handleLogin = () => {
-    const redirectUrl = `${window.location.origin}/products/${id}`;
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
-  };
-
   const handlePurchaseRequest = async () => {
     if (!user) {
       toast.error('Debes iniciar sesión para realizar una solicitud');
