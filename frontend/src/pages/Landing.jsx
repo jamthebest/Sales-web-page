@@ -116,11 +116,6 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
     }
   };
 
-  const handleLogin = () => {
-    const redirectUrl = `${window.location.origin}/`;
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
-  };
-
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
