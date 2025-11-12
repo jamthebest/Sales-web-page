@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ShoppingBag, Package, Shield, Zap, Plus, Sparkles, Sun, Moon, Upload, Minus, X } from 'lucide-react';
+import { Package, Shield, Zap, Plus, Sparkles, Upload, Minus, X } from 'lucide-react';
 import { toast } from 'sonner';
+import Navbar from '@/components/Navbar';
 
 const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
   const navigate = useNavigate();
