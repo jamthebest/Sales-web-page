@@ -73,15 +73,15 @@ const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-20" data-testid="no-products">
-            <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-xl text-gray-500">No se encontraron productos</p>
+            <Package className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <p className="text-xl text-gray-500 dark:text-gray-400">No se encontraron productos</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="products-grid">
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all overflow-hidden border border-gray-100 cursor-pointer group"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all overflow-hidden border border-gray-100 dark:border-gray-700 cursor-pointer group"
                 onClick={() => navigate(`/products/${product.id}`)}
                 data-testid={`product-card-${product.id}`}
               >
