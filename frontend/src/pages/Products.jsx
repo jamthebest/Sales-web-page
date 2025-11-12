@@ -50,17 +50,17 @@ const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 bg-clip-text text-transparent mb-4" data-testid="products-title">
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 dark:from-sky-400 dark:to-emerald-400 bg-clip-text text-transparent mb-4" data-testid="products-title">
             Nuestros Productos
           </h1>
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
             <Input
               type="text"
               placeholder="Buscar productos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 py-6 text-base rounded-full border-2 border-gray-200 focus:border-sky-500"
+              className="pl-10 py-6 text-base rounded-full border-2 border-gray-200 dark:border-gray-700 focus:border-sky-500 dark:focus:border-sky-400"
               data-testid="search-input"
             />
           </div>
