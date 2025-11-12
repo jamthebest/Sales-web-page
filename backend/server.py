@@ -171,6 +171,24 @@ async def require_admin(request: Request) -> User:
         raise HTTPException(status_code=403, detail="No tienes permisos de administrador")
     return user
 
+# ==================== Custom Routes ====================
+@api_router.post("/users/admin/{user_id}", response_model=User)
+async def set_admin_user(user_id: str, request: Request) -> Optional[User]:
+    """Set admin user from id"""
+    # await require_admin(request)
+    
+    existing = await db.users.find_one({"id": user_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    await db.users.update_one({"id": user_id}, {"$set": { "type": "admin" }})
+    
+    updated_user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if isinstance(updated_user.get('created_at'), str):
+        updated_user['created_at'] = datetime.fromisoformat(updated_user['created_at'])
+    
+    return User(**updated_user)
+
 # ==================== AUTH ROUTES ====================
 
 @api_router.post("/auth/session")
