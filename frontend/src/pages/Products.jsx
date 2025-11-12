@@ -85,7 +85,7 @@ const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
                 onClick={() => navigate(`/products/${product.id}`)}
                 data-testid={`product-card-${product.id}`}
               >
-                <div className="aspect-square bg-gradient-to-br from-sky-100 to-emerald-100 relative overflow-hidden">
+                <div className="aspect-square bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-700 dark:to-gray-600 relative overflow-hidden">
                   {product.image_url ? (
                     <img 
                       src={product.image_url} 
@@ -94,7 +94,7 @@ const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Package className="w-20 h-20 text-sky-300" />
+                      <Package className="w-20 h-20 text-sky-300 dark:text-sky-600" />
                     </div>
                   )}
                   {product.stock === 0 && (
@@ -110,19 +110,19 @@ const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
                 </div>
                 <div className="p-6">
                   {product.category && (
-                    <span className="inline-block px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-xs font-semibold mb-2">
+                    <span className="inline-block px-3 py-1 bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300 rounded-full text-xs font-semibold mb-2">
                       {product.category}
                     </span>
                   )}
-                  <h3 className="text-xl font-bold text-gray-800 mb-2" data-testid={`product-name-${product.id}`}>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2" data-testid={`product-name-${product.id}`}>
                     {product.name}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{product.description}</p>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{product.description}</p>
                   <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-sky-600" data-testid={`product-price-${product.id}`}>
+                    <span className="text-2xl font-bold text-sky-600 dark:text-sky-400" data-testid={`product-price-${product.id}`}>
                       ${product.price.toFixed(2)}
                     </span>
-                    <span className="text-sm text-gray-500" data-testid={`product-stock-${product.id}`}>
+                    <span className="text-sm text-gray-500 dark:text-gray-400" data-testid={`product-stock-${product.id}`}>
                       Stock: {product.stock}
                     </span>
                   </div>
