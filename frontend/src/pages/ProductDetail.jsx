@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ShoppingBag, Package, ArrowLeft, Minus, Plus } from 'lucide-react';
+import { Package, ArrowLeft, Minus, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import Navbar from '@/components/Navbar';
 
-const ProductDetail = ({ user, logout }) => {
+const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
