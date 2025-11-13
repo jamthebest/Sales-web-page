@@ -29,6 +29,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [showStockDialog, setShowStockDialog] = useState(false);
   const [stockProduct, setStockProduct] = useState(null);
   const [stockAmount, setStockAmount] = useState('');
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   useEffect(() => {
     fetchProducts();

@@ -181,7 +181,7 @@ async def set_admin_user(user_id: str, request: Request) -> Optional[User]:
     if not existing:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     
-    await db.users.update_one({"id": user_id}, {"$set": { "type": "admin" }})
+    await db.users.update_one({"id": user_id}, {"$set": { "role": "admin" }})
     
     updated_user = await db.users.find_one({"id": user_id}, {"_id": 0})
     if isinstance(updated_user.get('created_at'), str):
