@@ -179,7 +179,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       <Navbar user={user} logout={logout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} title="TiendaApp Admin" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 bg-clip-text text-transparent mb-8" data-testid="admin-title">
+        <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 dark:from-sky-400 dark:to-emerald-400 bg-clip-text text-transparent mb-8" data-testid="admin-title">
           Panel de Administración
         </h1>
 
