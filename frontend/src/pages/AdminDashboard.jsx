@@ -175,25 +175,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
   const outOfStockProducts = products.filter(p => p.stock === 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50">
-      {/* Navbar */}
-      <nav className="backdrop-blur-md bg-white/70 border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-              <ShoppingBag className="w-8 h-8 text-sky-600" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 bg-clip-text text-transparent">TiendaApp Admin</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Hola, {user.name}</span>
-              <Button onClick={() => navigate('/')} variant="outline" data-testid="nav-home-btn">
-                Ver Tienda
-              </Button>
-              <Button onClick={logout} variant="ghost" data-testid="logout-btn">Cerrar Sesión</Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <Navbar user={user} logout={logout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} title="TiendaApp Admin" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 bg-clip-text text-transparent mb-8" data-testid="admin-title">
