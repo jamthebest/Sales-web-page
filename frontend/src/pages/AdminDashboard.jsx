@@ -648,18 +648,18 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
 
       {/* Stock Update Dialog */}
       <Dialog open={showStockDialog} onOpenChange={setShowStockDialog}>
-        <DialogContent data-testid="stock-dialog">
+        <DialogContent className="dark:bg-gray-800" data-testid="stock-dialog">
           <DialogHeader>
-            <DialogTitle>Actualizar Stock</DialogTitle>
+            <DialogTitle className="dark:text-white">Actualizar Stock</DialogTitle>
           </DialogHeader>
           {stockProduct && (
             <div className="space-y-4">
               <div>
-                <p className="font-semibold text-lg">{stockProduct.name}</p>
-                <p className="text-sm text-gray-600">Stock actual: {stockProduct.stock} unidades</p>
+                <p className="font-semibold text-lg dark:text-white">{stockProduct.name}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Stock actual: {stockProduct.stock} unidades</p>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Cantidad a agregar/restar
                 </label>
                 <Input
@@ -669,7 +669,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   onChange={(e) => setStockAmount(e.target.value)}
                   data-testid="stock-amount-input"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Nuevo stock: {stockProduct.stock + (parseInt(stockAmount) || 0)}
                 </p>
               </div>
@@ -680,6 +680,62 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
               >
                 Actualizar Stock
               </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="dark:bg-gray-800" data-testid="delete-dialog">
+          <DialogHeader>
+            <DialogTitle className="dark:text-white">Confirmar Eliminación</DialogTitle>
+          </DialogHeader>
+          {productToDelete && (
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-700 dark:to-gray-600 flex-shrink-0">
+                  {productToDelete.image_url ? (
+                    <img src={productToDelete.image_url} alt={productToDelete.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Package className="w-8 h-8 text-sky-300 dark:text-sky-600" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-lg dark:text-white">{productToDelete.name}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Stock: {productToDelete.stock} unidades</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Precio: ${productToDelete.price.toFixed(2)}</p>
+                </div>
+              </div>
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                <p className="text-sm text-red-800 dark:text-red-300 font-semibold">⚠️ Esta acción no se puede deshacer</p>
+                <p className="text-xs text-red-700 dark:text-red-400 mt-1">
+                  El producto será eliminado permanentemente del sistema.
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => {
+                    setShowDeleteDialog(false);
+                    setProductToDelete(null);
+                  }}
+                  variant="outline"
+                  className="flex-1"
+                  data-testid="cancel-delete-btn"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={confirmDeleteProduct}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                  data-testid="confirm-delete-btn"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Eliminar Producto
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
