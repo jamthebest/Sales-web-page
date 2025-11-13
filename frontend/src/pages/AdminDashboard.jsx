@@ -122,14 +122,19 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
     }
   };
 
-  const handleDeleteProduct = async (productId) => {
-    if (!window.confirm('¿Estás seguro de eliminar este producto?')) {
-      return;
-    }
+  const handleDeleteProduct = (product) => {
+    setProductToDelete(product);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDeleteProduct = async () => {
+    if (!productToDelete) return;
 
     try {
-      await axiosInstance.delete(`/products/${productId}`);
+      await axiosInstance.delete(`/products/${productToDelete.id}`);
       toast.success('Producto eliminado');
+      setShowDeleteDialog(false);
+      setProductToDelete(null);
       fetchProducts();
     } catch (error) {
       toast.error('Error al eliminar producto');
