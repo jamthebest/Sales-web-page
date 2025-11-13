@@ -248,9 +248,9 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                         Editar
                       </Button>
                       <Button 
-                        onClick={() => handleDeleteProduct(product.id)} 
+                        onClick={() => handleDeleteProduct(product)} 
                         variant="outline" 
-                        className="flex-1 text-red-600 border-red-300 hover:bg-red-50"
+                        className="flex-1 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20"
                         data-testid={`delete-product-btn-${product.id}`}
                       >
                         <Trash2 className="w-4 h-4 mr-1" />
