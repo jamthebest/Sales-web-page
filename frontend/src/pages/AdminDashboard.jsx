@@ -7,10 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShoppingBag, Package, Plus, Edit, Trash2, Mail, Phone, ShoppingCart, AlertCircle, FileText, TrendingUp, Inbox } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, Mail, Phone, ShoppingCart, AlertCircle, FileText, TrendingUp, Inbox } from 'lucide-react';
 import { toast } from 'sonner';
+import Navbar from '@/components/Navbar';
 
-const AdminDashboard = ({ user, logout }) => {
+const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [requests, setRequests] = useState(null);
