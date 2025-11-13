@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Package, ArrowLeft, Minus, Plus } from 'lucide-react';
+import { Package, ArrowLeft, Minus, Plus, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 
@@ -19,7 +19,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerification, setShowVerification] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [requestType, setRequestType] = useState(null); // 'purchase', 'outofstock', 'custom'
+  const [requestType, setRequestType] = useState(null);
   const [customDescription, setCustomDescription] = useState('');
   const [showCustomRequest, setShowCustomRequest] = useState(false);
   const [mockCode, setMockCode] = useState('');
@@ -61,7 +61,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
       });
 
       toast.success('¡Solicitud de compra enviada!');
-      fetchProduct(); // Refresh stock
+      fetchProduct();
       setQuantity(1);
       setPhone('');
     } catch (error) {
@@ -107,7 +107,6 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
       setShowVerification(false);
       toast.success('Teléfono verificado');
 
-      // Submit the pending request
       if (requestType === 'outofstock') {
         await submitOutOfStockRequest();
       } else if (requestType === 'custom') {
@@ -157,57 +156,41 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-white to-emerald-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <div className="inline-block w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50">
-      {/* Navbar */}
-      <nav className="backdrop-blur-md bg-white/70 border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-              <ShoppingBag className="w-8 h-8 text-sky-600" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 bg-clip-text text-transparent">TiendaApp</span>
-            </div>
-            <div className="flex items-center gap-4">
-              {user ? (
-                <>
-                  <span className="text-sm text-gray-600">Hola, {user.name}</span>
-                  {user.role === 'admin' && (
-                    <Button onClick={() => navigate('/admin')} variant="outline" data-testid="nav-admin-btn">
-                      Admin
-                    </Button>
-                  )}
-                  <Button onClick={logout} variant="ghost" data-testid="logout-btn">Cerrar Sesión</Button>
-                </>
-              ) : (
-                <Button onClick={handleLogin} className="bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700" data-testid="login-btn">
-                  Iniciar Sesión
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <Navbar user={user} logout={logout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Button
-          onClick={() => navigate('/products')}
-          variant="ghost"
-          className="mb-8"
-          data-testid="back-btn"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver a productos
-        </Button>
+        <div className="flex justify-between items-center mb-8">
+          <Button
+            onClick={() => navigate('/products')}
+            variant="ghost"
+            data-testid="back-btn"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver a productos
+          </Button>
+          {user && user.role === 'admin' && (
+            <Button
+              onClick={() => navigate('/admin')}
+              variant="outline"
+              data-testid="edit-product-btn"
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              Editar Producto
+            </Button>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Image */}
-          <div className="aspect-square rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-sky-100 to-emerald-100">
+          <div className="aspect-square rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-700 dark:to-gray-600">
             {product.image_url ? (
               <img 
                 src={product.image_url} 
@@ -217,7 +200,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <Package className="w-32 h-32 text-sky-300" />
+                <Package className="w-32 h-32 text-sky-300 dark:text-sky-600" />
               </div>
             )}
           </div>
@@ -225,32 +208,32 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
           {/* Product Info */}
           <div className="space-y-6">
             {product.category && (
-              <span className="inline-block px-4 py-2 bg-sky-100 text-sky-700 rounded-full text-sm font-semibold">
+              <span className="inline-block px-4 py-2 bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300 rounded-full text-sm font-semibold">
                 {product.category}
               </span>
             )}
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-800" data-testid="product-detail-name">
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 dark:text-white" data-testid="product-detail-name">
               {product.name}
             </h1>
-            <p className="text-xl text-gray-600" data-testid="product-detail-description">
+            <p className="text-xl text-gray-600 dark:text-gray-400" data-testid="product-detail-description">
               {product.description}
             </p>
             <div className="flex items-baseline gap-4">
-              <span className="text-5xl font-bold text-sky-600" data-testid="product-detail-price">
+              <span className="text-5xl font-bold text-sky-600 dark:text-sky-400" data-testid="product-detail-price">
                 ${product.price.toFixed(2)}
               </span>
-              <span className={`text-lg font-semibold ${product.stock > 0 ? 'text-emerald-600' : 'text-red-600'}`} data-testid="product-detail-stock">
+              <span className={`text-lg font-semibold ${product.stock > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`} data-testid="product-detail-stock">
                 {product.stock > 0 ? `${product.stock} disponibles` : 'Agotado'}
               </span>
             </div>
 
             {/* Purchase Form */}
             {product.stock > 0 && (
-              <div className="bg-white p-6 rounded-2xl shadow-lg space-y-4" data-testid="purchase-form">
-                <h3 className="text-xl font-bold text-gray-800">Solicitar Compra</h3>
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 space-y-4" data-testid="purchase-form">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white">Solicitar Compra</h3>
                 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Cantidad</label>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Cantidad</label>
                   <div className="flex items-center gap-4">
                     <Button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -261,7 +244,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                     >
                       <Minus className="w-4 h-4" />
                     </Button>
-                    <span className="text-2xl font-bold w-12 text-center" data-testid="quantity-display">{quantity}</span>
+                    <span className="text-2xl font-bold w-12 text-center dark:text-white" data-testid="quantity-display">{quantity}</span>
                     <Button
                       onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                       variant="outline"
@@ -275,7 +258,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Teléfono</label>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Teléfono</label>
                   <Input
                     type="tel"
                     placeholder="+52 123 456 7890"
@@ -299,11 +282,11 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
 
             {/* Out of Stock Request */}
             {product.stock === 0 && (
-              <div className="bg-white p-6 rounded-2xl shadow-lg space-y-4" data-testid="outofstock-form">
-                <h3 className="text-xl font-bold text-gray-800">Solicitar cuando haya stock</h3>
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 space-y-4" data-testid="outofstock-form">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white">Solicitar cuando haya stock</h3>
                 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Cantidad deseada</label>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Cantidad deseada</label>
                   <div className="flex items-center gap-4">
                     <Button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -313,7 +296,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                     >
                       <Minus className="w-4 h-4" />
                     </Button>
-                    <span className="text-2xl font-bold w-12 text-center">{quantity}</span>
+                    <span className="text-2xl font-bold w-12 text-center dark:text-white">{quantity}</span>
                     <Button
                       onClick={() => setQuantity(quantity + 1)}
                       variant="outline"
@@ -326,7 +309,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Teléfono</label>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Teléfono</label>
                   <Input
                     type="tel"
                     placeholder="+52 123 456 7890"
@@ -348,9 +331,9 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
             )}
 
             {/* Custom Request */}
-            <div className="bg-white p-6 rounded-2xl shadow-lg space-y-4" data-testid="custom-request-section">
-              <h3 className="text-xl font-bold text-gray-800">¿No encuentras lo que buscas?</h3>
-              <p className="text-gray-600">Solicita un artículo personalizado</p>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 space-y-4" data-testid="custom-request-section">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white">¿No encuentras lo que buscas?</h3>
+              <p className="text-gray-600 dark:text-gray-400">Solicita un artículo personalizado</p>
               <Button
                 onClick={() => {
                   if (!phone) {
@@ -360,7 +343,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                   handleRequestVerification('custom');
                 }}
                 variant="outline"
-                className="w-full py-6 text-lg rounded-full border-2 border-sky-600 text-sky-600 hover:bg-sky-50"
+                className="w-full py-6 text-lg rounded-full border-2 border-sky-600 dark:border-sky-400 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20"
                 data-testid="custom-request-btn"
               >
                 Solicitar Artículo Personalizado
@@ -372,19 +355,19 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
 
       {/* Verification Dialog */}
       <Dialog open={showVerification} onOpenChange={setShowVerification}>
-        <DialogContent data-testid="verification-dialog">
+        <DialogContent className="dark:bg-gray-800" data-testid="verification-dialog">
           <DialogHeader>
-            <DialogTitle>Verificar Teléfono</DialogTitle>
+            <DialogTitle className="dark:text-white">Verificar Teléfono</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Hemos enviado un código de verificación al número {phone}
             </p>
             {mockCode && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p className="text-sm font-semibold text-yellow-800">MOCK: Código de prueba</p>
-                <p className="text-2xl font-bold text-yellow-900 mt-2">{mockCode}</p>
-                <p className="text-xs text-yellow-700 mt-1">También visible en los logs del servidor</p>
+              <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
+                <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-300">MOCK: Código de prueba</p>
+                <p className="text-2xl font-bold text-yellow-900 dark:text-yellow-200 mt-2">{mockCode}</p>
+                <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">También visible en los logs del servidor</p>
               </div>
             )}
             <Input
@@ -408,13 +391,13 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
 
       {/* Custom Request Dialog */}
       <Dialog open={showCustomRequest} onOpenChange={setShowCustomRequest}>
-        <DialogContent data-testid="custom-request-dialog">
+        <DialogContent className="dark:bg-gray-800" data-testid="custom-request-dialog">
           <DialogHeader>
-            <DialogTitle>Solicitud de Artículo Personalizado</DialogTitle>
+            <DialogTitle className="dark:text-white">Solicitud de Artículo Personalizado</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción del artículo</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Descripción del artículo</label>
               <Textarea
                 placeholder="Describe el artículo que necesitas..."
                 value={customDescription}
@@ -424,7 +407,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Cantidad</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Cantidad</label>
               <div className="flex items-center gap-4">
                 <Button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -434,7 +417,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                 >
                   <Minus className="w-4 h-4" />
                 </Button>
-                <span className="text-2xl font-bold w-12 text-center">{quantity}</span>
+                <span className="text-2xl font-bold w-12 text-center dark:text-white">{quantity}</span>
                 <Button
                   onClick={() => setQuantity(quantity + 1)}
                   variant="outline"
