@@ -383,14 +383,14 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
           {/* Purchase Requests Tab */}
           <TabsContent value="requests" className="space-y-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Solicitudes de Compra</h2>
-              <p className="text-gray-600">Revisa todas las solicitudes realizadas por los clientes</p>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Solicitudes de Compra</h2>
+              <p className="text-gray-600 dark:text-gray-400">Revisa todas las solicitudes realizadas por los clientes</p>
             </div>
 
             {requests && (
-              <Card data-testid="purchase-requests-card">
+              <Card className="dark:bg-gray-800 dark:border-gray-700" data-testid="purchase-requests-card">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 dark:text-white">
                     <ShoppingCart className="w-5 h-5" />
                     Solicitudes de Compra ({requests.purchase_requests?.length || 0})
                   </CardTitle>
@@ -399,24 +399,24 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   {requests.purchase_requests?.length > 0 ? (
                     <div className="space-y-4">
                       {requests.purchase_requests.map((req) => (
-                        <div key={req.id} className="bg-white p-4 rounded-lg border-2 border-gray-200 hover:border-sky-300 transition-colors" data-testid={`purchase-request-${req.id}`}>
+                        <div key={req.id} className="bg-white dark:bg-gray-700 p-4 rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-sky-300 dark:hover:border-sky-500 transition-colors" data-testid={`purchase-request-${req.id}`}>
                           <div className="flex justify-between items-start mb-3">
                             <div>
-                              <h4 className="font-bold text-lg text-gray-800">{req.product_name}</h4>
-                              <p className="text-sm text-gray-500">{new Date(req.created_at).toLocaleString('es-MX')}</p>
+                              <h4 className="font-bold text-lg text-gray-800 dark:text-white">{req.product_name}</h4>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(req.created_at).toLocaleString('es-MX')}</p>
                             </div>
-                            <span className="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-semibold">
+                            <span className="px-3 py-1 bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300 rounded-full text-sm font-semibold">
                               {req.status}
                             </span>
                           </div>
-                          <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div className="grid grid-cols-2 gap-3 text-sm dark:text-gray-300">
                             <div><span className="font-semibold">Cliente:</span> {req.user_name}</div>
                             <div><span className="font-semibold">Email:</span> {req.user_email}</div>
                             <div><span className="font-semibold">Teléfono:</span> {req.user_phone}</div>
                             <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
                             <div className="col-span-2">
                               <span className="font-semibold">Total:</span> 
-                              <span className="text-xl font-bold text-sky-600 ml-2">${req.total_price.toFixed(2)}</span>
+                              <span className="text-xl font-bold text-sky-600 dark:text-sky-400 ml-2">${req.total_price.toFixed(2)}</span>
                             </div>
                           </div>
                         </div>
@@ -424,8 +424,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <Inbox className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">No hay solicitudes de compra</p>
+                      <Inbox className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                      <p className="text-gray-500 dark:text-gray-400">No hay solicitudes de compra</p>
                     </div>
                   )}
                 </CardContent>
