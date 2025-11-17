@@ -329,33 +329,33 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
             )}
 
             {/* All Products Stock */}
-            <Card>
+            <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
-                <CardTitle>Todos los Productos</CardTitle>
+                <CardTitle className="dark:text-white">Todos los Productos</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   {products.map((product) => (
-                    <div key={product.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div key={product.id} className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                       <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-sky-100 to-emerald-100">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-600 dark:to-gray-500">
                           {product.image_url ? (
                             <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Package className="w-8 h-8 text-sky-300" />
+                              <Package className="w-8 h-8 text-sky-300 dark:text-sky-600" />
                             </div>
                           )}
                         </div>
                         <div>
-                          <h4 className="font-bold text-gray-800">{product.name}</h4>
-                          <p className="text-sm text-gray-600">{product.category || 'Sin categoría'}</p>
+                          <h4 className="font-bold text-gray-800 dark:text-white">{product.name}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{product.category || 'Sin categoría'}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <p className="text-2xl font-bold text-sky-600">{product.stock}</p>
-                          <p className="text-xs text-gray-500">unidades</p>
+                          <p className="text-2xl font-bold text-sky-600 dark:text-sky-400">{product.stock}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">unidades</p>
                         </div>
                         <Button
                           onClick={() => handleOpenStockDialog(product)}
