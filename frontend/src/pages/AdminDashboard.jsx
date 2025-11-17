@@ -266,15 +266,15 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
           {/* Stock Management Tab */}
           <TabsContent value="stock" className="space-y-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Gestión de Existencias</h2>
-              <p className="text-gray-600 mb-6">Actualiza el stock de tus productos y agrega nuevos</p>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Gestión de Existencias</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">Actualiza el stock de tus productos y agrega nuevos</p>
             </div>
 
             {/* Alerts */}
             {outOfStockProducts.length > 0 && (
-              <Card className="border-red-200 bg-red-50">
+              <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
                 <CardHeader>
-                  <CardTitle className="text-red-800 flex items-center gap-2">
+                  <CardTitle className="text-red-800 dark:text-red-300 flex items-center gap-2">
                     <AlertCircle className="w-5 h-5" />
                     Productos Agotados ({outOfStockProducts.length})
                   </CardTitle>
@@ -282,8 +282,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <CardContent>
                   <div className="space-y-2">
                     {outOfStockProducts.map(p => (
-                      <div key={p.id} className="flex justify-between items-center bg-white p-3 rounded-lg">
-                        <span className="font-semibold">{p.name}</span>
+                      <div key={p.id} className="flex justify-between items-center bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
+                        <span className="font-semibold dark:text-white">{p.name}</span>
                         <Button 
                           onClick={() => handleOpenStockDialog(p)}
                           size="sm"
@@ -299,9 +299,9 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
             )}
 
             {lowStockProducts.length > 0 && (
-              <Card className="border-orange-200 bg-orange-50">
+              <Card className="border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20">
                 <CardHeader>
-                  <CardTitle className="text-orange-800 flex items-center gap-2">
+                  <CardTitle className="text-orange-800 dark:text-orange-300 flex items-center gap-2">
                     <TrendingUp className="w-5 h-5" />
                     Stock Bajo ({lowStockProducts.length})
                   </CardTitle>
@@ -309,10 +309,10 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <CardContent>
                   <div className="space-y-2">
                     {lowStockProducts.map(p => (
-                      <div key={p.id} className="flex justify-between items-center bg-white p-3 rounded-lg">
+                      <div key={p.id} className="flex justify-between items-center bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
                         <div>
-                          <span className="font-semibold">{p.name}</span>
-                          <span className="text-sm text-gray-600 ml-2">Stock: {p.stock}</span>
+                          <span className="font-semibold dark:text-white">{p.name}</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">Stock: {p.stock}</span>
                         </div>
                         <Button 
                           onClick={() => handleOpenStockDialog(p)}
