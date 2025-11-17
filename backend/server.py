@@ -175,7 +175,7 @@ async def require_admin(request: Request) -> User:
 @api_router.post("/users/admin/{user_id}", response_model=User)
 async def set_admin_user(user_id: str, request: Request) -> Optional[User]:
     """Set admin user from id"""
-    # await require_admin(request)
+    await require_admin(request)
     
     existing = await db.users.find_one({"id": user_id})
     if not existing:
