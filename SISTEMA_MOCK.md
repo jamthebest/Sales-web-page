@@ -25,7 +25,7 @@ El sistema actualmente utiliza notificaciones **Mock** para simular el envío de
 
 ```bash
 # Solicitar código
-curl -X POST "https://itemrequest.preview.emergentagent.com/api/requests/verify-phone" \
+curl -X POST "https://emarket-portal.preview.emergentagent.com/api/requests/verify-phone" \
   -H "Content-Type: application/json" \
   -d '{"phone": "+52 123 456 7890"}'
 
@@ -121,14 +121,14 @@ Para probar el sistema Mock:
 
 ```bash
 # 1. Solicitar código
-RESPONSE=$(curl -s -X POST "https://itemrequest.preview.emergentagent.com/api/requests/verify-phone" \
+RESPONSE=$(curl -s -X POST "https://emarket-portal.preview.emergentagent.com/api/requests/verify-phone" \
   -H "Content-Type: application/json" \
   -d '{"phone": "+52 555 1234"}')
 
 CODE=$(echo $RESPONSE | python3 -c "import sys,json; print(json.load(sys.stdin)['mock_code'])")
 
 # 2. Validar código
-curl -X POST "https://itemrequest.preview.emergentagent.com/api/requests/validate-code" \
+curl -X POST "https://emarket-portal.preview.emergentagent.com/api/requests/validate-code" \
   -H "Content-Type: application/json" \
   -d "{\"phone\": \"+52 555 1234\", \"code\": \"$CODE\"}"
 ```

@@ -11,7 +11,7 @@ from datetime import datetime
 import time
 
 class EcommerceAPITester:
-    def __init__(self, base_url="https://itemrequest.preview.emergentagent.com"):
+    def __init__(self, base_url="https://emarket-portal.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.session_token = None
