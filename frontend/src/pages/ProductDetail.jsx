@@ -202,12 +202,17 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                 const currentImage = allImages[selectedImageIndex];
                 
                 if (currentImage) {
+                  const transform = currentImage.transform || { scale: 1, x: 50, y: 50 };
                   return (
                     <div className="relative w-full h-full">
                       <img 
                         src={currentImage.url} 
                         alt={currentImage.description || product.name} 
                         className="w-full h-full object-cover"
+                        style={{
+                          transform: `scale(${transform.scale})`,
+                          objectPosition: `${transform.x}% ${transform.y}%`
+                        }}
                         data-testid="product-image"
                       />
                       {currentImage.description && (
