@@ -77,10 +77,12 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       price: '',
       stock: '',
       image_url: '',
-      category: ''
+      category: '',
+      images: []
     });
     setImagePreview('');
     setImageFile(null);
+    setGalleryImages([]);
     setShowProductDialog(true);
   };
 
@@ -92,10 +94,12 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       price: product.price.toString(),
       stock: product.stock.toString(),
       image_url: product.image_url || '',
-      category: product.category || ''
+      category: product.category || '',
+      images: product.images || []
     });
     setImagePreview(product.image_url || '');
     setImageFile(null);
+    setGalleryImages(product.images || []);
     setShowProductDialog(true);
   };
 
