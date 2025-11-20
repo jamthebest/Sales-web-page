@@ -396,6 +396,67 @@ class EcommerceAPITester:
             self.log_result("GET /requests (admin)", False, 
                           error_msg=f"Status: {response.status_code if response else 'No response'}")
 
+    def test_image_transformations(self):
+        """Test image transformation functionality specifically"""
+        print("\n🖼️ Testing Image Transformation Features...")
+        
+        # Test product with default transformations
+        product_with_defaults = {
+            "name": "Producto con Transformaciones por Defecto",
+            "description": "Producto para probar valores por defecto",
+            "price": 49.99,
+            "stock": 5,
+            "category": "Pruebas",
+            "images": [
+                {
+                    "url": "https://example.com/default-test.jpg",
+                    "description": "Imagen con valores por defecto"
+                    # No transform specified - should use defaults
+                }
+            ]
+        }
+        
+        response = self.make_request('POST', 'products', data=product_with_defaults, use_admin=True)
+        if response and response.status_code == 200:
+            product = response.json()
+            images = product.get('images', [])
+            if images:
+                transform = images[0].get('transform', {})
+                if (transform.get('scale') == 1.0 and 
+                    transform.get('x') == 50 and 
+                    transform.get('y') == 50):
+                    self.log_result("Default image transformations", True, 
+                                  "Default values applied correctly (scale=1, x=50, y=50)")
+                else:
+                    self.log_result("Default image transformations", False, 
+                                  error_msg=f"Incorrect defaults: {transform}")
+            else:
+                self.log_result("Default image transformations", False, 
+                              error_msg="No images found in created product")
+        else:
+            self.log_result("Default image transformations", False, 
+                          error_msg=f"Status: {response.status_code if response else 'No response'}")
+
+        # Test product without images array
+        product_no_images = {
+            "name": "Producto sin Galería",
+            "description": "Producto solo con imagen principal",
+            "price": 29.99,
+            "stock": 3,
+            "category": "Pruebas",
+            "image_url": "https://example.com/main-only.jpg"
+        }
+        
+        response = self.make_request('POST', 'products', data=product_no_images, use_admin=True)
+        if response and response.status_code == 200:
+            product = response.json()
+            images = product.get('images', [])
+            self.log_result("Product without gallery", True, 
+                          f"Created product with main image only, gallery: {len(images)} items")
+        else:
+            self.log_result("Product without gallery", False, 
+                          error_msg=f"Status: {response.status_code if response else 'No response'}")
+
     def test_config_endpoints(self):
         """Test configuration endpoints"""
         print("\n⚙️ Testing Configuration Endpoints...")
