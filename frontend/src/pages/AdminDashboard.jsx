@@ -770,6 +770,102 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 )}
               </div>
             </div>
+
+            {/* Gallery Images Section */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Galería de Imágenes (Opcional)
+              </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                Agrega imágenes adicionales para mostrar una galería en la página de detalle
+              </p>
+              
+              <div className="space-y-3">
+                {/* Add new gallery image */}
+                <div className="flex gap-2">
+                  <Input
+                    type="url"
+                    placeholder="URL de imagen adicional"
+                    id="gallery-url-input"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleGalleryImageUrl(e.target.value);
+                        e.target.value = '';
+                      }
+                    }}
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      const input = document.getElementById('gallery-url-input');
+                      if (input.value) {
+                        handleGalleryImageUrl(input.value);
+                        input.value = '';
+                      }
+                    }}
+                  >
+                    Agregar URL
+                  </Button>
+                </div>
+                
+                <div className="text-center text-gray-500 dark:text-gray-400 text-sm">o</div>
+                
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleGalleryImageUpload}
+                    className="hidden"
+                    id="gallery-image-upload"
+                  />
+                  <label htmlFor="gallery-image-upload">
+                    <Button type="button" variant="outline" className="w-full" asChild>
+                      <span className="cursor-pointer">
+                        <Upload className="w-4 h-4 mr-2" />
+                        Subir Imagen a Galería
+                      </span>
+                    </Button>
+                  </label>
+                </div>
+
+                {/* Display gallery images */}
+                {galleryImages.length > 0 && (
+                  <div className="grid grid-cols-2 gap-3 mt-4">
+                    {galleryImages.map((img, index) => (
+                      <div key={index} className="relative border-2 border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+                        <img 
+                          src={img.url} 
+                          alt={`Galería ${index + 1}`} 
+                          className="w-full h-32 object-cover"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-1 right-1 h-6 w-6"
+                          onClick={() => removeGalleryImage(index)}
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                        <div className="p-2 bg-white dark:bg-gray-800">
+                          <Input
+                            type="text"
+                            placeholder="Descripción (opcional)"
+                            value={img.description || ''}
+                            onChange={(e) => updateGalleryImageDescription(index, e.target.value)}
+                            className="text-xs h-8"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
             <Button
               onClick={handleSaveProduct}
               className="w-full bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700"
