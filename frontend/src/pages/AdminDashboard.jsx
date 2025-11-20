@@ -181,12 +181,22 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
 
   const openImageEditor = (index) => {
     setEditingImageIndex(index);
+    setEditingMainImage(false);
     const img = galleryImages[index];
     setImageTransform(img.transform || { scale: 1, x: 50, y: 50 });
   };
 
+  const openMainImageEditor = () => {
+    setEditingMainImage(true);
+    setEditingImageIndex(null);
+    setImageTransform(mainImageTransform);
+  };
+
   const saveImageTransform = () => {
-    if (editingImageIndex !== null) {
+    if (editingMainImage) {
+      setMainImageTransform(imageTransform);
+      setEditingMainImage(false);
+    } else if (editingImageIndex !== null) {
       updateGalleryImageTransform(editingImageIndex, imageTransform);
       setEditingImageIndex(null);
     }
