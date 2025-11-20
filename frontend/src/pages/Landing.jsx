@@ -299,10 +299,17 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
           </p>
         </div>
 
+        {/* Sentinel element for intersection observer */}
+        <div ref={headerSentinelRef} className="h-1" />
+
         {/* Sticky Products Header */}
         <div 
           ref={stickyHeaderRef}
-          className="sticky top-16 z-40 backdrop-blur-md bg-gradient-to-br from-sky-50/80 via-white/80 to-emerald-50/80 dark:from-gray-900/80 dark:via-gray-800/80 dark:to-gray-900/80 py-6 mb-6 transition-all duration-300 border-b border-gray-200/50 dark:border-gray-700/50"
+          className={`sticky top-16 z-40 py-6 mb-6 transition-all duration-300 ${
+            isHeaderStuck 
+              ? 'backdrop-blur-md bg-gradient-to-br from-sky-50/90 via-white/90 to-emerald-50/90 dark:from-gray-900/90 dark:via-gray-800/90 dark:to-gray-900/90 border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm' 
+              : 'bg-transparent'
+          }`}
         >
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
             {/* Title */}
