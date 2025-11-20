@@ -866,27 +866,16 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                     {galleryImages.map((img, index) => (
                       <div key={index} className="relative border-2 border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden group">
                         {/* Image Preview with Transform */}
-                        <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 overflow-hidden relative">
-                          <div 
+                        <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 overflow-hidden relative flex items-center justify-center">
+                          <img 
+                            src={img.url} 
+                            alt={`Galería ${index + 1}`}
+                            className="max-w-full max-h-full object-contain"
                             style={{
-                              width: '100%',
-                              height: '100%',
-                              overflow: 'hidden',
-                              position: 'relative'
+                              transform: `scale(${img.transform?.scale || 1})`,
+                              transformOrigin: `${img.transform?.x || 50}% ${img.transform?.y || 50}%`
                             }}
-                          >
-                            <img 
-                              src={img.url} 
-                              alt={`Galería ${index + 1}`}
-                              style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                                transform: `scale(${img.transform?.scale || 1})`,
-                                objectPosition: `${img.transform?.x || 50}% ${img.transform?.y || 50}%`
-                              }}
-                            />
-                          </div>
+                          />
                           
                           {/* Overlay buttons */}
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
