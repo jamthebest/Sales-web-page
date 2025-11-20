@@ -1067,7 +1067,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
           <DialogHeader>
             <DialogTitle className="dark:text-white">Ajustar Visualización de Imagen</DialogTitle>
           </DialogHeader>
-          {editingImageIndex !== null && galleryImages[editingImageIndex] && (
+          {((editingImageIndex !== null && galleryImages[editingImageIndex]) || (editingMainImage && imagePreview)) && (
             <div className="space-y-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Ajusta cómo se verá la imagen en la galería. Usa el zoom y arrastra la imagen para posicionarla.
