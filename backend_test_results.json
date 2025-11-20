@@ -1,7 +1,7 @@
 {
-  "total_tests": 18,
-  "passed_tests": 15,
-  "success_rate": "83.3%",
+  "total_tests": 19,
+  "passed_tests": 16,
+  "success_rate": "84.2%",
   "test_results": [
     {
       "test": "GET /auth/me (regular user)",
@@ -24,38 +24,44 @@
     {
       "test": "GET /products",
       "success": true,
-      "details": "Found 6 products",
+      "details": "Found 26 products",
       "error": ""
     },
     {
       "test": "GET /products/{id}",
       "success": true,
-      "details": "",
-      "error": "Status: 200"
-    },
-    {
-      "test": "POST /products (admin)",
-      "success": true,
-      "details": "Created product: Producto de Prueba",
+      "details": "Product retrieved but no images",
       "error": ""
     },
     {
-      "test": "PUT /products/{id} (admin)",
+      "test": "POST /products with image transformations",
       "success": true,
-      "details": "",
-      "error": "Status: 200"
+      "details": "Created product with 2 images and correct transformations",
+      "error": ""
+    },
+    {
+      "test": "PUT /products/{id} with transformations",
+      "success": true,
+      "details": "Product updated with new transformations",
+      "error": ""
+    },
+    {
+      "test": "Default image transformations",
+      "success": true,
+      "details": "Default values applied correctly (scale=1, x=50, y=50)",
+      "error": ""
+    },
+    {
+      "test": "Product without gallery",
+      "success": true,
+      "details": "Created product with main image only, gallery: 0 items",
+      "error": ""
     },
     {
       "test": "POST /requests/verify-phone",
       "success": true,
-      "details": "Mock code: 569110",
+      "details": "Mock code: N/A",
       "error": ""
-    },
-    {
-      "test": "POST /requests/validate-code",
-      "success": true,
-      "details": "",
-      "error": "Status: 200"
     },
     {
       "test": "POST /requests/purchase",
@@ -78,7 +84,7 @@
     {
       "test": "GET /requests (admin)",
       "success": true,
-      "details": "Total requests: 3",
+      "details": "Total requests: 7",
       "error": ""
     },
     {
