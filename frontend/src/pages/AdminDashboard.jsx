@@ -127,6 +127,38 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
     setProductForm({ ...productForm, image_url: '' });
   };
 
+  const handleGalleryImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('La imagen debe ser menor a 5MB');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setGalleryImages(prev => [...prev, { url: reader.result, description: '' }]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleGalleryImageUrl = (url) => {
+    if (url.trim()) {
+      setGalleryImages(prev => [...prev, { url: url.trim(), description: '' }]);
+    }
+  };
+
+  const updateGalleryImageDescription = (index, description) => {
+    setGalleryImages(prev => prev.map((img, i) => 
+      i === index ? { ...img, description } : img
+    ));
+  };
+
+  const removeGalleryImage = (index) => {
+    setGalleryImages(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSaveProduct = async () => {
     if (!productForm.name || !productForm.price || productForm.stock === '') {
       toast.error('Completa los campos requeridos');
