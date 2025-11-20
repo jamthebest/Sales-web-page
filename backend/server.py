@@ -68,6 +68,7 @@ class ProductCreate(BaseModel):
     price: float
     stock: int
     image_url: Optional[str] = None
+    images: Optional[List[ProductImage]] = []
     category: Optional[str] = None
 
 class ProductUpdate(BaseModel):
@@ -76,6 +77,7 @@ class ProductUpdate(BaseModel):
     price: Optional[float] = None
     stock: Optional[int] = None
     image_url: Optional[str] = None
+    images: Optional[List[ProductImage]] = None
     category: Optional[str] = None
 
 class PurchaseRequest(BaseModel):
