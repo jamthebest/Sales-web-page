@@ -23,6 +23,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
   const stickyHeaderRef = useRef(null);
   const bottomBannerRef = useRef(null);
   const debounceTimer = useRef(null);
+  const headerSentinelRef = useRef(null);
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [customForm, setCustomForm] = useState({
     name: '',
