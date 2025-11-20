@@ -17,10 +17,12 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
   const observerTarget = useRef(null);
   const stickyHeaderRef = useRef(null);
   const bottomBannerRef = useRef(null);
+  const debounceTimer = useRef(null);
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [customForm, setCustomForm] = useState({
     name: '',
