@@ -223,6 +223,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
         price: parseFloat(productForm.price),
         stock: parseInt(productForm.stock),
         image_url: imageUrl || null,
+        image_transform: imageUrl ? mainImageTransform : null,
         images: galleryImages.length > 0 ? galleryImages : [],
         category: productForm.category || null
       };
