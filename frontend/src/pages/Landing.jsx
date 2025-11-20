@@ -278,7 +278,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
         {/* Sticky Products Header */}
         <div 
           ref={stickyHeaderRef}
-          className="sticky top-16 z-40 bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-4 mb-6 transition-all duration-300"
+          className="sticky top-16 z-40 backdrop-blur-md bg-gradient-to-br from-sky-50/80 via-white/80 to-emerald-50/80 dark:from-gray-900/80 dark:via-gray-800/80 dark:to-gray-900/80 py-6 mb-6 transition-all duration-300 border-b border-gray-200/50 dark:border-gray-700/50"
         >
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
             {/* Title */}
