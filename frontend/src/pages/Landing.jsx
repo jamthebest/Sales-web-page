@@ -321,26 +321,25 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
             </h2>
             
             {/* Search Bar - Center */}
-            <div className="relative w-full max-w-xl">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+            <div className="relative w-full max-w-xl flex items-center">
+              <Search className="absolute left-3 text-gray-400 dark:text-gray-500 w-5 h-5 pointer-events-none" />
               <Input
                 type="text"
                 placeholder="Buscar productos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 py-6 text-base rounded-full border-2 border-gray-200 dark:border-gray-700 focus:border-sky-500 dark:focus:border-sky-400"
+                className="w-full pl-10 pr-12 py-6 text-base rounded-full border-2 border-gray-200 dark:border-gray-700 focus:border-sky-500 dark:focus:border-sky-400"
                 data-testid="search-input"
               />
               {searchTerm && (
-                <Button
+                <button
                   onClick={() => setSearchTerm('')}
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full"
+                  className="absolute right-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   data-testid="clear-search-btn"
+                  type="button"
                 >
-                  <X className="w-4 h-4" />
-                </Button>
+                  <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                </button>
               )}
             </div>
 
