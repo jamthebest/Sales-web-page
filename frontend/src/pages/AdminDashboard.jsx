@@ -86,6 +86,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
     });
     setImagePreview('');
     setImageFile(null);
+    setMainImageTransform({ scale: 1, x: 50, y: 50 });
     setGalleryImages([]);
     setShowProductDialog(true);
   };
@@ -103,6 +104,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
     });
     setImagePreview(product.image_url || '');
     setImageFile(null);
+    setMainImageTransform(product.image_transform || { scale: 1, x: 50, y: 50 });
     setGalleryImages(product.images || []);
     setShowProductDialog(true);
   };
