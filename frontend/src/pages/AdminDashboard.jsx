@@ -128,12 +128,20 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
     }
 
     try {
+      // Si hay imagen preview (base64) y no hay URL, usar el preview
+      let imageUrl = productForm.image_url;
+      if (imagePreview && !productForm.image_url) {
+        imageUrl = imagePreview; // Guardar el base64 directamente
+      } else if (imagePreview && imagePreview.startsWith('data:')) {
+        imageUrl = imagePreview; // Si es base64, usar el preview
+      }
+
       const data = {
         name: productForm.name,
         description: productForm.description,
         price: parseFloat(productForm.price),
         stock: parseInt(productForm.stock),
-        image_url: productForm.image_url || null,
+        image_url: imageUrl || null,
         category: productForm.category || null
       };
 
@@ -146,6 +154,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       }
 
       setShowProductDialog(false);
+      setImagePreview('');
+      setImageFile(null);
       fetchProducts();
     } catch (error) {
       toast.error('Error al guardar producto');
