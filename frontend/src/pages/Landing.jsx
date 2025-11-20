@@ -275,33 +275,6 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
           </p>
         </div>
 
-        {/* Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700" data-testid="feature-easy">
-            <div className="w-12 h-12 bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl flex items-center justify-center mb-4">
-              <Zap className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Rápido y Fácil</h3>
-            <p className="text-gray-600 dark:text-gray-400">Realiza solicitudes de compra en segundos sin complicaciones de pago</p>
-          </div>
-
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700" data-testid="feature-inventory">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4">
-              <Package className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Inventario en Tiempo Real</h3>
-            <p className="text-gray-600 dark:text-gray-400">Conoce la disponibilidad exacta de cada producto al instante</p>
-          </div>
-
-          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700" data-testid="feature-secure">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4">
-              <Shield className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Verificación Segura</h3>
-            <p className="text-gray-600 dark:text-gray-400">Verifica tu teléfono una vez y realiza múltiples solicitudes</p>
-          </div>
-        </div>
-
         {/* Sticky Products Header */}
         <div 
           ref={stickyHeaderRef}
