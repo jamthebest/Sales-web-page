@@ -36,6 +36,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [verificationCode, setVerificationCode] = useState('');
   const [mockCode, setMockCode] = useState('');
   const [imagePreview, setImagePreview] = useState('');
+  const [isHeaderStuck, setIsHeaderStuck] = useState(false);
   const PRODUCTS_PER_PAGE = 6;
 
   useEffect(() => {
