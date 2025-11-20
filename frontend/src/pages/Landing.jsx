@@ -42,12 +42,29 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
     fetchProducts();
   }, []);
 
+  // Debounce effect
   useEffect(() => {
-    if (searchTerm) {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    debounceTimer.current = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 600);
+
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
       const filtered = products.filter(p => 
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (p.category && p.category.toLowerCase().includes(searchTerm.toLowerCase()))
+        p.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        p.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        (p.category && p.category.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
       );
       setFilteredProducts(filtered);
       setDisplayedProducts([]);
@@ -56,10 +73,10 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
     } else {
       setFilteredProducts(products);
     }
-  }, [searchTerm, products]);
+  }, [debouncedSearchTerm, products]);
 
   useEffect(() => {
-    const productsToDisplay = searchTerm ? filteredProducts : products;
+    const productsToDisplay = debouncedSearchTerm ? filteredProducts : products;
     if (productsToDisplay.length > 0) {
       loadMoreProducts();
     }
