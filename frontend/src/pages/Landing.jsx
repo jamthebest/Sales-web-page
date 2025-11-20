@@ -136,7 +136,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
     if (loading) return;
     
     setLoading(true);
-    const productsToDisplay = searchTerm ? filteredProducts : products;
+    const productsToDisplay = debouncedSearchTerm ? filteredProducts : products;
     const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
     const endIndex = startIndex + PRODUCTS_PER_PAGE;
     const newProducts = productsToDisplay.slice(startIndex, endIndex);
@@ -145,7 +145,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
       setTimeout(() => {
         setDisplayedProducts(prev => {
           // Si es la primera página después de buscar, resetear
-          if (page === 1 && searchTerm) {
+          if (page === 1 && debouncedSearchTerm) {
             return newProducts;
           }
           return [...prev, ...newProducts];
