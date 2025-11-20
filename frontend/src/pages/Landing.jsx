@@ -280,26 +280,18 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
           ref={stickyHeaderRef}
           className="sticky top-16 z-40 bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-4 mb-6 transition-all duration-300"
         >
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 dark:from-sky-400 dark:to-emerald-400 bg-clip-text text-transparent" data-testid="products-section-title">
-                Nuestros Productos
-              </h2>
-              <Button
-                onClick={() => setShowCustomModal(true)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 whitespace-nowrap"
-                data-testid="custom-request-cta-btn"
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                Solicitar Artículo Personalizado
-              </Button>
-            </div>
-            {/* Search Bar */}
-            <div className="relative max-w-md">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+            {/* Title */}
+            <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 dark:from-sky-400 dark:to-emerald-400 bg-clip-text text-transparent flex-shrink-0" data-testid="products-section-title">
+              Nuestros Productos
+            </h2>
+            
+            {/* Search Bar - Center */}
+            <div className="relative w-full max-w-xl">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
               <Input
                 type="text"
-                placeholder="Buscar productos por nombre, descripción o categoría..."
+                placeholder="Buscar productos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 py-6 text-base rounded-full border-2 border-gray-200 dark:border-gray-700 focus:border-sky-500 dark:focus:border-sky-400"
@@ -317,6 +309,17 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                 </Button>
               )}
             </div>
+
+            {/* Custom Request Button */}
+            <Button
+              onClick={() => setShowCustomModal(true)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 whitespace-nowrap flex-shrink-0"
+              data-testid="custom-request-cta-btn"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Solicitar Artículo Personalizado</span>
+              <span className="sm:hidden">Solicitar Artículo</span>
+            </Button>
           </div>
         </div>
 
