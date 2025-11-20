@@ -204,14 +204,14 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                 if (currentImage) {
                   const transform = currentImage.transform || { scale: 1, x: 50, y: 50 };
                   return (
-                    <div className="relative w-full h-full">
+                    <div className="relative w-full h-full flex items-center justify-center">
                       <img 
                         src={currentImage.url} 
                         alt={currentImage.description || product.name} 
-                        className="w-full h-full object-cover"
+                        className="max-w-full max-h-full object-contain"
                         style={{
                           transform: `scale(${transform.scale})`,
-                          objectPosition: `${transform.x}% ${transform.y}%`
+                          transformOrigin: `${transform.x}% ${transform.y}%`
                         }}
                         data-testid="product-image"
                       />
