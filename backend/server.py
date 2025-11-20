@@ -64,6 +64,7 @@ class Product(BaseModel):
     price: float
     stock: int
     image_url: Optional[str] = None  # Mantener compatibilidad
+    image_transform: Optional[ImageTransform] = ImageTransform()  # Transformación de imagen principal
     images: Optional[List[ProductImage]] = []  # Nueva galería de imágenes
     category: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -74,6 +75,7 @@ class ProductCreate(BaseModel):
     price: float
     stock: int
     image_url: Optional[str] = None
+    image_transform: Optional[ImageTransform] = ImageTransform()
     images: Optional[List[ProductImage]] = []
     category: Optional[str] = None
 
@@ -83,6 +85,7 @@ class ProductUpdate(BaseModel):
     price: Optional[float] = None
     stock: Optional[int] = None
     image_url: Optional[str] = None
+    image_transform: Optional[ImageTransform] = None
     images: Optional[List[ProductImage]] = None
     category: Optional[str] = None
 
