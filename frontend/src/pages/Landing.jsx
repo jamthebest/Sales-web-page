@@ -106,7 +106,29 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
     };
   }, [hasMore, loading]);
 
-  // Sticky header logic
+  // Sticky header logic - detect when header is stuck
+  useEffect(() => {
+    const sentinel = headerSentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // When sentinel is not visible, header is stuck
+        setIsHeaderStuck(!entry.isIntersecting);
+      },
+      { threshold: 0, rootMargin: '-65px 0px 0px 0px' } // 64px navbar + 1px
+    );
+
+    observer.observe(sentinel);
+
+    return () => {
+      if (sentinel) {
+        observer.unobserve(sentinel);
+      }
+    };
+  }, []);
+
+  // Logic for bottom banner
   useEffect(() => {
     const handleScroll = () => {
       if (stickyHeaderRef.current && bottomBannerRef.current) {
