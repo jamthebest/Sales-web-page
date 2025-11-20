@@ -243,7 +243,23 @@ class EcommerceAPITester:
         if response and response.status_code == 200:
             created_product = response.json()
             self.test_product_id = created_product['id']  # Update for further tests
-            self.log_result("POST /products (admin)", True, f"Created product: {created_product['name']}")
+            
+            # Verify image transformations were saved correctly
+            images = created_product.get('images', [])
+            if images and len(images) == 2:
+                img1 = images[0]
+                transform1 = img1.get('transform', {})
+                if (transform1.get('scale') == 1.5 and 
+                    transform1.get('x') == 60 and 
+                    transform1.get('y') == 40):
+                    self.log_result("POST /products with image transformations", True, 
+                                  f"Created product with {len(images)} images and correct transformations")
+                else:
+                    self.log_result("POST /products with image transformations", False, 
+                                  error_msg="Image transformations not saved correctly")
+            else:
+                self.log_result("POST /products with image transformations", False, 
+                              error_msg="Images not saved correctly")
         else:
             self.log_result("POST /products (admin)", False, 
                           error_msg=f"Status: {response.status_code if response else 'No response'}")
