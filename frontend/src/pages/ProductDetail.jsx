@@ -196,7 +196,11 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
             <div className="aspect-square rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-700 dark:to-gray-600">
               {(() => {
                 const allImages = [];
-                if (product.image_url) allImages.push({ url: product.image_url, description: null });
+                if (product.image_url) allImages.push({ 
+                  url: product.image_url, 
+                  description: null,
+                  transform: product.image_transform || { scale: 1, x: 50, y: 50 }
+                });
                 if (product.images && product.images.length > 0) allImages.push(...product.images);
                 
                 const currentImage = allImages[selectedImageIndex];
