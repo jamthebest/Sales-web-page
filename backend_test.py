@@ -202,12 +202,26 @@ class EcommerceAPITester:
             self.log_result("GET /products", False, 
                           error_msg=f"Status: {response.status_code if response else 'No response'}")
 
-        # Test get single product
+        # Test get single product with transformations
         if self.test_product_id:
             response = self.make_request('GET', f'products/{self.test_product_id}')
-            success = response and response.status_code == 200
-            self.log_result("GET /products/{id}", success, 
-                          error_msg=f"Status: {response.status_code if response else 'No response'}")
+            if response and response.status_code == 200:
+                product = response.json()
+                images = product.get('images', [])
+                if images:
+                    # Verify transformations are retrieved correctly
+                    transform = images[0].get('transform', {})
+                    if 'scale' in transform and 'x' in transform and 'y' in transform:
+                        self.log_result("GET /products/{id} with transformations", True, 
+                                      f"Retrieved product with {len(images)} images and transformations")
+                    else:
+                        self.log_result("GET /products/{id} with transformations", False, 
+                                      error_msg="Transformations missing in retrieved product")
+                else:
+                    self.log_result("GET /products/{id}", True, "Product retrieved but no images")
+            else:
+                self.log_result("GET /products/{id}", False, 
+                              error_msg=f"Status: {response.status_code if response else 'No response'}")
 
         # Test create product with image gallery and transformations (admin only)
         test_product = {
