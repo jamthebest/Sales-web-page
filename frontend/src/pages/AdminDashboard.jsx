@@ -1059,7 +1059,10 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       </Dialog>
 
       {/* Image Editor Dialog */}
-      <Dialog open={editingImageIndex !== null} onOpenChange={() => setEditingImageIndex(null)}>
+      <Dialog open={editingImageIndex !== null || editingMainImage} onOpenChange={() => {
+        setEditingImageIndex(null);
+        setEditingMainImage(false);
+      }}>
         <DialogContent className="max-w-3xl dark:bg-gray-800" data-testid="image-editor-dialog">
           <DialogHeader>
             <DialogTitle className="dark:text-white">Ajustar Visualización de Imagen</DialogTitle>
