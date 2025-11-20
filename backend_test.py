@@ -278,14 +278,44 @@ class EcommerceAPITester:
             self.log_result("POST /products (admin)", False, 
                           error_msg=f"Status: {response.status_code if response else 'No response'}")
 
-        # Test update product (admin only)
+        # Test update product with new transformations (admin only)
         if self.test_product_id:
-            update_data = {"price": 89.99, "stock": 15}
+            update_data = {
+                "price": 89.99, 
+                "stock": 15,
+                "images": [
+                    {
+                        "url": "https://example.com/updated-gallery1.jpg",
+                        "description": "Vista actualizada",
+                        "transform": {
+                            "scale": 2.0,
+                            "x": 25,
+                            "y": 75
+                        }
+                    }
+                ]
+            }
             response = self.make_request('PUT', f'products/{self.test_product_id}', 
                                        data=update_data, use_admin=True)
-            success = response and response.status_code == 200
-            self.log_result("PUT /products/{id} (admin)", success, 
-                          error_msg=f"Status: {response.status_code if response else 'No response'}")
+            if response and response.status_code == 200:
+                updated_product = response.json()
+                images = updated_product.get('images', [])
+                if images and len(images) == 1:
+                    transform = images[0].get('transform', {})
+                    if (transform.get('scale') == 2.0 and 
+                        transform.get('x') == 25 and 
+                        transform.get('y') == 75):
+                        self.log_result("PUT /products/{id} with transformations", True, 
+                                      "Product updated with new transformations")
+                    else:
+                        self.log_result("PUT /products/{id} with transformations", False, 
+                                      error_msg="Updated transformations not correct")
+                else:
+                    self.log_result("PUT /products/{id} with transformations", False, 
+                                  error_msg="Updated images not saved correctly")
+            else:
+                self.log_result("PUT /products/{id} (admin)", False, 
+                              error_msg=f"Status: {response.status_code if response else 'No response'}")
 
     def test_request_endpoints(self):
         """Test request-related endpoints"""
