@@ -77,6 +77,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       image_url: '',
       category: ''
     });
+    setImagePreview('');
+    setImageFile(null);
     setShowProductDialog(true);
   };
 
@@ -90,7 +92,33 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       image_url: product.image_url || '',
       category: product.category || ''
     });
+    setImagePreview(product.image_url || '');
+    setImageFile(null);
     setShowProductDialog(true);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('La imagen debe ser menor a 5MB');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setImageFile(file);
+        setProductForm({ ...productForm, image_url: '' });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearImage = () => {
+    setImagePreview('');
+    setImageFile(null);
+    setProductForm({ ...productForm, image_url: '' });
   };
 
   const handleSaveProduct = async () => {
