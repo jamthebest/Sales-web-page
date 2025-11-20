@@ -45,9 +45,15 @@ class UserSession(BaseModel):
     expires_at: datetime
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class ImageTransform(BaseModel):
+    scale: float = 1.0  # Zoom level
+    x: float = 50  # Position X (percentage)
+    y: float = 50  # Position Y (percentage)
+
 class ProductImage(BaseModel):
     url: str
     description: Optional[str] = None
+    transform: Optional[ImageTransform] = ImageTransform()
 
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
