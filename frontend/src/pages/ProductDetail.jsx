@@ -23,6 +23,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [customDescription, setCustomDescription] = useState('');
   const [showCustomRequest, setShowCustomRequest] = useState(false);
   const [mockCode, setMockCode] = useState('');
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
     fetchProduct();
