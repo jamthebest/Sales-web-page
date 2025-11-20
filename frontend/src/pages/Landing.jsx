@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Package, Shield, Zap, Plus, Sparkles, Upload, Minus, X, Search } from 'lucide-react';
+import { Package, Plus, Sparkles, Upload, Minus, X, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 
