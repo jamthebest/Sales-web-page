@@ -600,13 +600,13 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
 
       {/* Product Dialog */}
       <Dialog open={showProductDialog} onOpenChange={setShowProductDialog}>
-        <DialogContent className="max-w-2xl" data-testid="product-dialog">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-gray-800" data-testid="product-dialog">
           <DialogHeader>
-            <DialogTitle>{editingProduct ? 'Editar Producto' : 'Nuevo Producto'}</DialogTitle>
+            <DialogTitle className="dark:text-white">{editingProduct ? 'Editar Producto' : 'Nuevo Producto'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre *</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Nombre *</label>
               <Input
                 value={productForm.name}
                 onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
@@ -615,7 +615,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Descripción</label>
               <Textarea
                 value={productForm.description}
                 onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
@@ -626,7 +626,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Precio *</label>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Precio *</label>
                 <Input
                   type="number"
                   step="0.01"
@@ -637,7 +637,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Stock *</label>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Stock *</label>
                 <Input
                   type="number"
                   value={productForm.stock}
@@ -648,7 +648,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Categoría</label>
               <Input
                 value={productForm.category}
                 onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
@@ -657,13 +657,68 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">URL de Imagen</label>
-              <Input
-                value={productForm.image_url}
-                onChange={(e) => setProductForm({ ...productForm, image_url: e.target.value })}
-                placeholder="https://ejemplo.com/imagen.jpg"
-                data-testid="product-image-input"
-              />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Imagen del Producto (Opcional)
+              </label>
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <Input
+                    type="url"
+                    placeholder="URL de imagen: https://ejemplo.com/imagen.jpg"
+                    value={productForm.image_url}
+                    onChange={(e) => {
+                      setProductForm({ ...productForm, image_url: e.target.value });
+                      if (e.target.value) {
+                        setImagePreview(e.target.value);
+                        setImageFile(null);
+                      }
+                    }}
+                    className="flex-1"
+                    data-testid="product-image-url-input"
+                  />
+                </div>
+                <div className="text-center text-gray-500 dark:text-gray-400 text-sm">o</div>
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    id="product-image-upload"
+                    data-testid="product-image-file-input"
+                  />
+                  <label htmlFor="product-image-upload">
+                    <Button type="button" variant="outline" className="w-full" asChild>
+                      <span className="cursor-pointer">
+                        <Upload className="w-4 h-4 mr-2" />
+                        Subir Imagen (máx 5MB)
+                      </span>
+                    </Button>
+                  </label>
+                </div>
+                {imagePreview && (
+                  <div className="relative mt-4 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600">
+                    <img 
+                      src={imagePreview} 
+                      alt="Preview" 
+                      className="w-full h-48 object-cover"
+                      onError={() => {
+                        toast.error('No se pudo cargar la imagen');
+                        setImagePreview('');
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2"
+                      onClick={clearImage}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
             <Button
               onClick={handleSaveProduct}
