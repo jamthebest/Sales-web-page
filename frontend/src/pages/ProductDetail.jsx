@@ -190,20 +190,74 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Product Image */}
-          <div className="aspect-square rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-700 dark:to-gray-600">
-            {product.image_url ? (
-              <img 
-                src={product.image_url} 
-                alt={product.name} 
-                className="w-full h-full object-cover"
-                data-testid="product-image"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <Package className="w-32 h-32 text-sky-300 dark:text-sky-600" />
-              </div>
-            )}
+          {/* Product Image Gallery */}
+          <div className="space-y-4">
+            {/* Main Image */}
+            <div className="aspect-square rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-700 dark:to-gray-600">
+              {(() => {
+                const allImages = [];
+                if (product.image_url) allImages.push({ url: product.image_url, description: null });
+                if (product.images && product.images.length > 0) allImages.push(...product.images);
+                
+                const currentImage = allImages[selectedImageIndex];
+                
+                if (currentImage) {
+                  return (
+                    <div className="relative w-full h-full">
+                      <img 
+                        src={currentImage.url} 
+                        alt={currentImage.description || product.name} 
+                        className="w-full h-full object-cover"
+                        data-testid="product-image"
+                      />
+                      {currentImage.description && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white p-4">
+                          <p className="text-sm">{currentImage.description}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Package className="w-32 h-32 text-sky-300 dark:text-sky-600" />
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+
+            {/* Thumbnail Gallery */}
+            {(() => {
+              const allImages = [];
+              if (product.image_url) allImages.push({ url: product.image_url, description: null });
+              if (product.images && product.images.length > 0) allImages.push(...product.images);
+              
+              if (allImages.length > 1) {
+                return (
+                  <div className="grid grid-cols-4 gap-3">
+                    {allImages.map((img, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedImageIndex(index)}
+                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                          selectedImageIndex === index 
+                            ? 'border-sky-500 dark:border-sky-400 shadow-lg' 
+                            : 'border-gray-200 dark:border-gray-700 hover:border-sky-300 dark:hover:border-sky-600'
+                        }`}
+                      >
+                        <img 
+                          src={img.url} 
+                          alt={`Vista ${index + 1}`} 
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                );
+              }
+              return null;
+            })()}
           </div>
 
           {/* Product Info */}
