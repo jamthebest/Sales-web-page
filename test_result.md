@@ -101,3 +101,123 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Aplicación de e-commerce con funcionalidad de solicitudes de compra, gestión de inventario, editor de imágenes con transformaciones (zoom y posición), y modo oscuro completo"
+
+backend:
+  - task: "API de productos (CRUD)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "APIs implementadas con soporte para galería de imágenes y transformaciones"
+  
+  - task: "API de solicitudes (compra, sin stock, personalizadas)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Endpoints para purchase_requests, out_of_stock_requests, custom_requests implementados"
+
+  - task: "Modelo de transformaciones de imagen"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "ImageTransform y ProductImage models implementados con scale, x, y"
+
+frontend:
+  - task: "ProductDetail - Aplicar transformaciones de imagen"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/ProductDetail.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Código implementado en líneas 205-214. Las transformaciones se aplican con transform scale y objectPosition. Necesita verificación visual."
+
+  - task: "AdminDashboard - Modal de confirmación de eliminación"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/AdminDashboard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Modal completo implementado en líneas 982-1036 con state, handlers y UI. Necesita testing."
+
+  - task: "AdminDashboard - Editor de imágenes interactivo"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/AdminDashboard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Editor implementado en líneas 1038-1177 con zoom, pan, preview. Necesita testing."
+
+  - task: "Modo oscuro en tabs del AdminDashboard"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/AdminDashboard.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "TabsList y TabsTrigger usan clases shadcn/ui con soporte dark mode (bg-muted, text-muted-foreground). Variables CSS configuradas correctamente en index.css. Necesita verificación visual."
+
+  - task: "Navbar con toggle de modo oscuro"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/Navbar.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Toggle funciona correctamente. Probado visualmente en landing page."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+
+test_plan:
+  current_focus:
+    - "ProductDetail - Aplicar transformaciones de imagen"
+    - "AdminDashboard - Modal de confirmación de eliminación"
+    - "AdminDashboard - Editor de imágenes interactivo"
+    - "Modo oscuro en tabs del AdminDashboard"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Revisión inicial completada. Código ya implementado para todas las tareas pendientes. ProductDetail.jsx ya aplica transformaciones (líneas 205-214). Modal de eliminación ya existe (líneas 982-1036). Editor de imágenes implementado (líneas 1038-1177). Modo oscuro configurado correctamente con variables CSS. Necesito verificar visualmente y probar la funcionalidad completa."
