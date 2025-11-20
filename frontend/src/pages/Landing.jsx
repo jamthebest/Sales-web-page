@@ -74,6 +74,9 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
       setHasMore(true);
     } else {
       setFilteredProducts(products);
+      setDisplayedProducts([]);
+      setPage(1);
+      setHasMore(true);
     }
   }, [debouncedSearchTerm, products]);
 
