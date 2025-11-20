@@ -864,21 +864,55 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 {galleryImages.length > 0 && (
                   <div className="grid grid-cols-2 gap-3 mt-4">
                     {galleryImages.map((img, index) => (
-                      <div key={index} className="relative border-2 border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
-                        <img 
-                          src={img.url} 
-                          alt={`Galería ${index + 1}`} 
-                          className="w-full h-32 object-cover"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-1 right-1 h-6 w-6"
-                          onClick={() => removeGalleryImage(index)}
-                        >
-                          <X className="w-3 h-3" />
-                        </Button>
+                      <div key={index} className="relative border-2 border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden group">
+                        {/* Image Preview with Transform */}
+                        <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 overflow-hidden relative">
+                          <div 
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              overflow: 'hidden',
+                              position: 'relative'
+                            }}
+                          >
+                            <img 
+                              src={img.url} 
+                              alt={`Galería ${index + 1}`}
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                                transform: `scale(${img.transform?.scale || 1})`,
+                                objectPosition: `${img.transform?.x || 50}% ${img.transform?.y || 50}%`
+                              }}
+                            />
+                          </div>
+                          
+                          {/* Overlay buttons */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => openImageEditor(index)}
+                              className="text-xs"
+                            >
+                              <Edit className="w-3 h-3 mr-1" />
+                              Ajustar
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => removeGalleryImage(index)}
+                              className="text-xs"
+                            >
+                              <Trash2 className="w-3 h-3 mr-1" />
+                              Eliminar
+                            </Button>
+                          </div>
+                        </div>
+                        
                         <div className="p-2 bg-white dark:bg-gray-800">
                           <Input
                             type="text"
