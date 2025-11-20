@@ -24,10 +24,12 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
     price: '',
     stock: '',
     image_url: '',
-    category: ''
+    category: '',
+    images: []
   });
   const [imagePreview, setImagePreview] = useState('');
   const [imageFile, setImageFile] = useState(null);
+  const [galleryImages, setGalleryImages] = useState([]);
   const [showStockDialog, setShowStockDialog] = useState(false);
   const [stockProduct, setStockProduct] = useState(null);
   const [stockAmount, setStockAmount] = useState('');
