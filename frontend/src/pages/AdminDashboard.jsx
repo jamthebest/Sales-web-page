@@ -1034,6 +1034,147 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Image Editor Dialog */}
+      <Dialog open={editingImageIndex !== null} onOpenChange={() => setEditingImageIndex(null)}>
+        <DialogContent className="max-w-3xl dark:bg-gray-800" data-testid="image-editor-dialog">
+          <DialogHeader>
+            <DialogTitle className="dark:text-white">Ajustar Visualización de Imagen</DialogTitle>
+          </DialogHeader>
+          {editingImageIndex !== null && galleryImages[editingImageIndex] && (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Ajusta cómo se verá la imagen en la galería. Usa el zoom y arrastra la imagen para posicionarla.
+              </p>
+              
+              {/* Image Preview */}
+              <div className="relative aspect-square bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-600">
+                <div 
+                  className="w-full h-full overflow-hidden cursor-move relative"
+                  onMouseDown={(e) => {
+                    const startX = e.clientX;
+                    const startY = e.clientY;
+                    const startPosX = imageTransform.x;
+                    const startPosY = imageTransform.y;
+                    
+                    const handleMouseMove = (e) => {
+                      const deltaX = (e.clientX - startX) * 0.1;
+                      const deltaY = (e.clientY - startY) * 0.1;
+                      setImageTransform(prev => ({
+                        ...prev,
+                        x: Math.max(0, Math.min(100, startPosX + deltaX)),
+                        y: Math.max(0, Math.min(100, startPosY + deltaY))
+                      }));
+                    };
+                    
+                    const handleMouseUp = () => {
+                      document.removeEventListener('mousemove', handleMouseMove);
+                      document.removeEventListener('mouseup', handleMouseUp);
+                    };
+                    
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('mouseup', handleMouseUp);
+                  }}
+                >
+                  <img 
+                    src={galleryImages[editingImageIndex].url} 
+                    alt="Editor"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transform: `scale(${imageTransform.scale})`,
+                      objectPosition: `${imageTransform.x}% ${imageTransform.y}%`,
+                      userSelect: 'none',
+                      pointerEvents: 'none'
+                    }}
+                    draggable={false}
+                  />
+                </div>
+                <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                  Arrastra para mover
+                </div>
+              </div>
+
+              {/* Controls */}
+              <div className="space-y-4">
+                {/* Zoom Control */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center justify-between">
+                    <span>Zoom: {imageTransform.scale.toFixed(2)}x</span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setImageTransform({ scale: 1, x: 50, y: 50 })}
+                      className="text-xs"
+                    >
+                      <RotateCcw className="w-3 h-3 mr-1" />
+                      Restablecer
+                    </Button>
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setImageTransform(prev => ({ ...prev, scale: Math.max(0.5, prev.scale - 0.1) }))}
+                    >
+                      <ZoomOut className="w-4 h-4" />
+                    </Button>
+                    <input
+                      type="range"
+                      min="0.5"
+                      max="3"
+                      step="0.1"
+                      value={imageTransform.scale}
+                      onChange={(e) => setImageTransform(prev => ({ ...prev, scale: parseFloat(e.target.value) }))}
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setImageTransform(prev => ({ ...prev, scale: Math.min(3, prev.scale + 0.1) }))}
+                    >
+                      <ZoomIn className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Position Info */}
+                <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400">
+                  <div>
+                    <span className="font-semibold">Posición X:</span> {imageTransform.x.toFixed(1)}%
+                  </div>
+                  <div>
+                    <span className="font-semibold">Posición Y:</span> {imageTransform.y.toFixed(1)}%
+                  </div>
+                </div>
+              </div>
+
+              {/* Save Button */}
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setEditingImageIndex(null)}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="button"
+                  onClick={saveImageTransform}
+                  className="flex-1 bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700"
+                >
+                  Guardar Ajustes
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
