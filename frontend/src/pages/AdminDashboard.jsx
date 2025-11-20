@@ -139,7 +139,11 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       
       const reader = new FileReader();
       reader.onloadend = () => {
-        setGalleryImages(prev => [...prev, { url: reader.result, description: '' }]);
+        setGalleryImages(prev => [...prev, { 
+          url: reader.result, 
+          description: '', 
+          transform: { scale: 1, x: 50, y: 50 } 
+        }]);
       };
       reader.readAsDataURL(file);
     }
@@ -147,7 +151,11 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
 
   const handleGalleryImageUrl = (url) => {
     if (url.trim()) {
-      setGalleryImages(prev => [...prev, { url: url.trim(), description: '' }]);
+      setGalleryImages(prev => [...prev, { 
+        url: url.trim(), 
+        description: '', 
+        transform: { scale: 1, x: 50, y: 50 } 
+      }]);
     }
   };
 
@@ -157,8 +165,27 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
     ));
   };
 
+  const updateGalleryImageTransform = (index, transform) => {
+    setGalleryImages(prev => prev.map((img, i) => 
+      i === index ? { ...img, transform } : img
+    ));
+  };
+
   const removeGalleryImage = (index) => {
     setGalleryImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const openImageEditor = (index) => {
+    setEditingImageIndex(index);
+    const img = galleryImages[index];
+    setImageTransform(img.transform || { scale: 1, x: 50, y: 50 });
+  };
+
+  const saveImageTransform = () => {
+    if (editingImageIndex !== null) {
+      updateGalleryImageTransform(editingImageIndex, imageTransform);
+      setEditingImageIndex(null);
+    }
   };
 
   const handleSaveProduct = async () => {
