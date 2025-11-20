@@ -30,6 +30,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [imagePreview, setImagePreview] = useState('');
   const [imageFile, setImageFile] = useState(null);
   const [galleryImages, setGalleryImages] = useState([]);
+  const [editingImageIndex, setEditingImageIndex] = useState(null);
+  const [imageTransform, setImageTransform] = useState({ scale: 1, x: 50, y: 50 });
   const [showStockDialog, setShowStockDialog] = useState(false);
   const [stockProduct, setStockProduct] = useState(null);
   const [stockAmount, setStockAmount] = useState('');
