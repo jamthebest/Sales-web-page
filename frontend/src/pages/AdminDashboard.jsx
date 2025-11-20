@@ -791,25 +791,44 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   </label>
                 </div>
                 {imagePreview && (
-                  <div className="relative mt-4 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600">
-                    <img 
-                      src={imagePreview} 
-                      alt="Preview" 
-                      className="w-full h-48 object-cover"
-                      onError={() => {
-                        toast.error('No se pudo cargar la imagen');
-                        setImagePreview('');
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2"
-                      onClick={clearImage}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+                  <div className="relative mt-4 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600 group">
+                    <div className="w-full h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden relative flex items-center justify-center">
+                      <img 
+                        src={imagePreview} 
+                        alt="Preview" 
+                        className="max-w-full max-h-full object-contain"
+                        style={{
+                          transform: `scale(${mainImageTransform.scale})`,
+                          transformOrigin: `${mainImageTransform.x}% ${mainImageTransform.y}%`
+                        }}
+                        onError={() => {
+                          toast.error('No se pudo cargar la imagen');
+                          setImagePreview('');
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          onClick={openMainImageEditor}
+                          className="text-xs"
+                        >
+                          <Edit className="w-3 h-3 mr-1" />
+                          Ajustar
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={clearImage}
+                          className="text-xs"
+                        >
+                          <X className="w-3 h-3 mr-1" />
+                          Eliminar
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
