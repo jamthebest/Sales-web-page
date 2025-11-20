@@ -547,6 +547,7 @@ class EcommerceAPITester:
         # Run test suites
         self.test_auth_endpoints()
         self.test_product_endpoints()
+        self.test_image_transformations()
         self.test_request_endpoints()
         self.test_config_endpoints()
         self.test_unauthorized_access()
