@@ -45,6 +45,10 @@ class UserSession(BaseModel):
     expires_at: datetime
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class ProductImage(BaseModel):
+    url: str
+    description: Optional[str] = None
+
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
     
@@ -53,7 +57,8 @@ class Product(BaseModel):
     description: str
     price: float
     stock: int
-    image_url: Optional[str] = None
+    image_url: Optional[str] = None  # Mantener compatibilidad
+    images: Optional[List[ProductImage]] = []  # Nueva galería de imágenes
     category: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
