@@ -16,6 +16,8 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const observerTarget = useRef(null);
   const stickyHeaderRef = useRef(null);
   const bottomBannerRef = useRef(null);
