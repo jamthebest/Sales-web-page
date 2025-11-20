@@ -209,13 +209,34 @@ class EcommerceAPITester:
             self.log_result("GET /products/{id}", success, 
                           error_msg=f"Status: {response.status_code if response else 'No response'}")
 
-        # Test create product (admin only)
+        # Test create product with image gallery and transformations (admin only)
         test_product = {
             "name": "Producto de Prueba",
             "description": "Descripción del producto de prueba",
             "price": 99.99,
             "stock": 10,
-            "category": "Pruebas"
+            "category": "Pruebas",
+            "image_url": "https://example.com/main-image.jpg",
+            "images": [
+                {
+                    "url": "https://example.com/gallery1.jpg",
+                    "description": "Vista frontal",
+                    "transform": {
+                        "scale": 1.5,
+                        "x": 60,
+                        "y": 40
+                    }
+                },
+                {
+                    "url": "https://example.com/gallery2.jpg",
+                    "description": "Vista lateral",
+                    "transform": {
+                        "scale": 1.2,
+                        "x": 30,
+                        "y": 70
+                    }
+                }
+            ]
         }
         
         response = self.make_request('POST', 'products', data=test_product, use_admin=True)
