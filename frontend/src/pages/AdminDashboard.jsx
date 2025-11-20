@@ -1103,7 +1103,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   }}
                 >
                   <img 
-                    src={galleryImages[editingImageIndex].url} 
+                    src={editingMainImage ? imagePreview : galleryImages[editingImageIndex].url} 
                     alt="Editor"
                     className="max-w-full max-h-full object-contain"
                     style={{
