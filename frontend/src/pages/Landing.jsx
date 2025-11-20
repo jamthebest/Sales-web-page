@@ -328,7 +328,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
           {displayedProducts.length === 0 && !loading ? (
             <div className="text-center py-20">
               <Package className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-              {searchTerm ? (
+              {debouncedSearchTerm ? (
                 <>
                   <p className="text-xl text-gray-500 dark:text-gray-400 mb-2">No se encontraron productos</p>
                   <p className="text-sm text-gray-400 dark:text-gray-500">Intenta con otros términos de búsqueda</p>
