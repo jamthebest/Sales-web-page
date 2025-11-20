@@ -41,10 +41,27 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
   }, []);
 
   useEffect(() => {
-    if (products.length > 0) {
+    if (searchTerm) {
+      const filtered = products.filter(p => 
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.category && p.category.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setFilteredProducts(filtered);
+      setDisplayedProducts([]);
+      setPage(1);
+      setHasMore(true);
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [searchTerm, products]);
+
+  useEffect(() => {
+    const productsToDisplay = searchTerm ? filteredProducts : products;
+    if (productsToDisplay.length > 0) {
       loadMoreProducts();
     }
-  }, [products, page]);
+  }, [filteredProducts, products, page]);
 
   // Intersection Observer for lazy loading
   useEffect(() => {
