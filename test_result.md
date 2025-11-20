@@ -116,6 +116,9 @@ backend:
       - working: true
         agent: "main"
         comment: "APIs implementadas con soporte para galería de imágenes y transformaciones"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: All product APIs working correctly. GET /products returns 28 products. POST /products creates products with image galleries and transformations (scale, x, y values saved correctly). GET /products/{id} retrieves products with transformations intact. PUT /products/{id} updates transformations successfully. DELETE /products/{id} working. Image transformations tested: scale=1.5, x=60, y=40 saved and retrieved correctly. Default values (scale=1, x=50, y=50) applied when not specified."
   
   - task: "API de solicitudes (compra, sin stock, personalizadas)"
     implemented: true
@@ -128,6 +131,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Endpoints para purchase_requests, out_of_stock_requests, custom_requests implementados"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: All request APIs working perfectly. POST /requests/verify-phone returns mock codes (e.g., 190848). POST /requests/validate-code validates codes correctly. POST /requests/purchase creates purchase requests successfully. POST /requests/out-of-stock creates out-of-stock requests. POST /requests/custom creates custom requests. GET /requests (admin only) returns all request types. Phone verification flow working end-to-end."
 
   - task: "Modelo de transformaciones de imagen"
     implemented: true
@@ -140,6 +146,9 @@ backend:
       - working: true
         agent: "main"
         comment: "ImageTransform y ProductImage models implementados con scale, x, y"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Image transformation models working perfectly. ImageTransform with scale, x, y fields functioning correctly. ProductImage model with transform field working. Tested creating product with transformations: scale=1.5, x=60, y=40 and scale=1.2, x=30, y=70. Updated transformations to scale=2.0, x=25, y=75. All values saved and retrieved correctly from MongoDB. Default values applied when transform not specified."
 
 frontend:
   - task: "ProductDetail - Aplicar transformaciones de imagen"
