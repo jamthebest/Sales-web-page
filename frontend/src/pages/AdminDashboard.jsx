@@ -1039,7 +1039,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
               {/* Image Preview */}
               <div className="relative aspect-square bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-600">
                 <div 
-                  className="w-full h-full overflow-hidden cursor-move relative"
+                  className="w-full h-full overflow-hidden cursor-move relative flex items-center justify-center"
                   onMouseDown={(e) => {
                     const startX = e.clientX;
                     const startY = e.clientY;
@@ -1068,12 +1068,10 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   <img 
                     src={galleryImages[editingImageIndex].url} 
                     alt="Editor"
+                    className="max-w-full max-h-full object-contain"
                     style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
                       transform: `scale(${imageTransform.scale})`,
-                      objectPosition: `${imageTransform.x}% ${imageTransform.y}%`,
+                      transformOrigin: `${imageTransform.x}% ${imageTransform.y}%`,
                       userSelect: 'none',
                       pointerEvents: 'none'
                     }}
