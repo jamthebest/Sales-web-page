@@ -694,6 +694,143 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
             )}
           </TabsContent>
 
+          {/* Completed Requests Tab */}
+          <TabsContent value="completed" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Solicitudes Finalizadas</h2>
+              <p className="text-gray-600 dark:text-gray-400">Historial de todas las solicitudes completadas</p>
+            </div>
+
+            {requests && (
+              <>
+                {/* Completed Purchase Requests */}
+                {requests.purchase_requests?.filter(r => r.status === 'completed').length > 0 && (
+                  <Card className="dark:bg-gray-800 dark:border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 dark:text-white">
+                        <ShoppingCart className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                        Solicitudes de Compra Completadas ({requests.purchase_requests?.filter(r => r.status === 'completed').length || 0})
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {requests.purchase_requests.filter(r => r.status === 'completed').map((req) => (
+                          <div key={req.id} className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg border-2 border-emerald-200 dark:border-emerald-800" data-testid={`completed-purchase-${req.id}`}>
+                            <div className="flex justify-between items-start mb-3">
+                              <div>
+                                <h4 className="font-bold text-lg text-gray-800 dark:text-white">{req.product_name}</h4>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(req.created_at).toLocaleString('es-MX')}</p>
+                              </div>
+                              <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-full text-sm font-semibold flex items-center gap-1">
+                                <Check className="w-4 h-4" />
+                                Completada
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 text-sm dark:text-gray-300">
+                              <div><span className="font-semibold">Cliente:</span> {req.user_name}</div>
+                              <div><span className="font-semibold">Email:</span> {req.user_email}</div>
+                              <div><span className="font-semibold">Teléfono:</span> {req.user_phone}</div>
+                              <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
+                              <div className="col-span-2">
+                                <span className="font-semibold">Total:</span> 
+                                <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 ml-2">${req.total_price.toFixed(2)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Completed Out of Stock Requests */}
+                {requests.out_of_stock_requests?.filter(r => r.status === 'completed').length > 0 && (
+                  <Card className="dark:bg-gray-800 dark:border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 dark:text-white">
+                        <AlertCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                        Solicitudes Sin Stock Completadas ({requests.out_of_stock_requests?.filter(r => r.status === 'completed').length || 0})
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {requests.out_of_stock_requests.filter(r => r.status === 'completed').map((req) => (
+                          <div key={req.id} className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg border-2 border-emerald-200 dark:border-emerald-800" data-testid={`completed-outofstock-${req.id}`}>
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className="font-bold text-lg text-gray-800 dark:text-white">{req.product_name}</h4>
+                              <div className="text-right">
+                                <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-full text-sm font-semibold flex items-center gap-1">
+                                  <Check className="w-4 h-4" />
+                                  Completada
+                                </span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400 block mt-1">{new Date(req.created_at).toLocaleString('es-MX')}</span>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 text-sm dark:text-gray-300">
+                              <div><span className="font-semibold">Teléfono:</span> {req.phone}</div>
+                              <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Completed Custom Requests */}
+                {requests.custom_requests?.filter(r => r.status === 'completed').length > 0 && (
+                  <Card className="dark:bg-gray-800 dark:border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 dark:text-white">
+                        <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                        Solicitudes Personalizadas Completadas ({requests.custom_requests?.filter(r => r.status === 'completed').length || 0})
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {requests.custom_requests.filter(r => r.status === 'completed').map((req) => (
+                          <div key={req.id} className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg border-2 border-emerald-200 dark:border-emerald-800" data-testid={`completed-custom-${req.id}`}>
+                            <div className="flex justify-between items-start mb-3">
+                              <span className="text-xs text-gray-500 dark:text-gray-400">{new Date(req.created_at).toLocaleString('es-MX')}</span>
+                              <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-full text-sm font-semibold flex items-center gap-1">
+                                <Check className="w-4 h-4" />
+                                Completada
+                              </span>
+                            </div>
+                            <div className="space-y-2 text-sm">
+                              <div className="bg-white dark:bg-gray-700 p-3 rounded">
+                                <span className="font-semibold block mb-1 dark:text-white">Descripción:</span>
+                                <p className="text-gray-700 dark:text-gray-300">{req.description}</p>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 dark:text-gray-300">
+                                <div><span className="font-semibold">Teléfono:</span> {req.phone}</div>
+                                <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* No Completed Requests */}
+                {requests.purchase_requests?.filter(r => r.status === 'completed').length === 0 &&
+                 requests.out_of_stock_requests?.filter(r => r.status === 'completed').length === 0 &&
+                 requests.custom_requests?.filter(r => r.status === 'completed').length === 0 && (
+                  <Card className="dark:bg-gray-800 dark:border-gray-700">
+                    <CardContent className="py-12">
+                      <div className="text-center">
+                        <CheckCircle2 className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                        <p className="text-gray-500 dark:text-gray-400">No hay solicitudes completadas aún</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </>
+            )}
+          </TabsContent>
+
           {/* Config Tab */}
           <TabsContent value="config" className="space-y-6">
             <Card data-testid="config-card">
