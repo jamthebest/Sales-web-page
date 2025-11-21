@@ -240,7 +240,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
 
   const handleCustomSubmit = async (e) => {
     e.preventDefault();
-    await handleRequestVerification();
+    await submitCustomRequest();
   };
 
   const resetCustomForm = () => {
