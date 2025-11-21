@@ -547,13 +547,13 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 dark:text-white">
                     <ShoppingCart className="w-5 h-5" />
-                    Solicitudes de Compra ({requests.purchase_requests?.length || 0})
+                    Solicitudes de Compra Pendientes ({requests.purchase_requests?.filter(r => r.status !== 'completed').length || 0})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {requests.purchase_requests?.length > 0 ? (
+                  {requests.purchase_requests?.filter(r => r.status !== 'completed').length > 0 ? (
                     <div className="space-y-4">
-                      {requests.purchase_requests.map((req) => (
+                      {requests.purchase_requests.filter(r => r.status !== 'completed').map((req) => (
                         <div key={req.id} className="bg-white dark:bg-gray-700 p-4 rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-sky-300 dark:hover:border-sky-500 transition-colors" data-testid={`purchase-request-${req.id}`}>
                           <div className="flex justify-between items-start mb-3">
                             <div>
@@ -564,7 +564,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                               {req.status}
                             </span>
                           </div>
-                          <div className="grid grid-cols-2 gap-3 text-sm dark:text-gray-300">
+                          <div className="grid grid-cols-2 gap-3 text-sm dark:text-gray-300 mb-3">
                             <div><span className="font-semibold">Cliente:</span> {req.user_name}</div>
                             <div><span className="font-semibold">Email:</span> {req.user_email}</div>
                             <div><span className="font-semibold">Teléfono:</span> {req.user_phone}</div>
@@ -574,13 +574,21 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                               <span className="text-xl font-bold text-sky-600 dark:text-sky-400 ml-2">${req.total_price.toFixed(2)}</span>
                             </div>
                           </div>
+                          <Button
+                            onClick={() => handleCompletePurchaseRequest(req.id)}
+                            className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
+                            size="sm"
+                          >
+                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                            Marcar como Completada
+                          </Button>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <div className="text-center py-12">
                       <Inbox className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                      <p className="text-gray-500 dark:text-gray-400">No hay solicitudes de compra</p>
+                      <p className="text-gray-500 dark:text-gray-400">No hay solicitudes de compra pendientes</p>
                     </div>
                   )}
                 </CardContent>
