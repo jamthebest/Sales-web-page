@@ -486,12 +486,6 @@ async def create_out_of_stock_request(data: dict):
     
     await db.out_of_stock_requests.insert_one(request_doc)
     
-    # Update last_used
-    await db.verified_phones.update_one(
-        {"phone": phone},
-        {"$set": {"last_used": datetime.now(timezone.utc).isoformat()}}
-    )
-    
     # Mock notification
     logger.info(f"📧 MOCK EMAIL: Solicitud de artículo sin stock #{request_obj.id}")
     logger.info(f"   Producto: {request_obj.product_name}")
