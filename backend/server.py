@@ -547,6 +547,51 @@ async def get_all_requests(request: Request):
         "custom_requests": custom_requests
     }
 
+@api_router.put("/requests/purchase/{request_id}/complete")
+async def complete_purchase_request(request_id: str, request: Request):
+    """Mark a purchase request as completed"""
+    await require_admin(request)
+    
+    result = await db.purchase_requests.update_one(
+        {"id": request_id},
+        {"$set": {"status": "completed"}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+    
+    return {"message": "Solicitud marcada como completada"}
+
+@api_router.put("/requests/out-of-stock/{request_id}/complete")
+async def complete_out_of_stock_request(request_id: str, request: Request):
+    """Mark an out-of-stock request as completed"""
+    await require_admin(request)
+    
+    result = await db.out_of_stock_requests.update_one(
+        {"id": request_id},
+        {"$set": {"status": "completed"}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+    
+    return {"message": "Solicitud marcada como completada"}
+
+@api_router.put("/requests/custom/{request_id}/complete")
+async def complete_custom_request(request_id: str, request: Request):
+    """Mark a custom request as completed"""
+    await require_admin(request)
+    
+    result = await db.custom_requests.update_one(
+        {"id": request_id},
+        {"$set": {"status": "completed"}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+    
+    return {"message": "Solicitud marcada como completada"}
+
 # ==================== CONFIG ROUTES ====================
 
 @api_router.get("/config")
