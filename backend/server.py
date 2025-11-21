@@ -467,11 +467,6 @@ async def create_out_of_stock_request(data: dict):
     """Request out of stock product"""
     phone = data["phone"]
     
-    # Check if phone is verified
-    verified = await db.verified_phones.find_one({"phone": phone})
-    if not verified:
-        raise HTTPException(status_code=400, detail="Teléfono no verificado")
-    
     # Get product
     product = await db.products.find_one({"id": data["product_id"]}, {"_id": 0})
     if not product:
@@ -483,7 +478,7 @@ async def create_out_of_stock_request(data: dict):
         product_name=product["name"],
         phone=phone,
         quantity=data["quantity"],
-        verified=True
+        verified=False
     )
     
     request_doc = request_obj.model_dump()
