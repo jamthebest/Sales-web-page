@@ -205,46 +205,14 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
     }
   };
 
-  const handleRequestVerification = async () => {
-    if (!customForm.phone) {
-      toast.error('Ingresa tu número de teléfono');
-      return;
-    }
-
-    try {
-      const response = await axiosInstance.post('/requests/verify-phone', { phone: customForm.phone });
-      
-      if (response.data.already_verified) {
-        await submitCustomRequest();
-        return;
-      }
-
-      setMockCode(response.data.mock_code);
-      setShowVerification(true);
-      toast.success('Código enviado (revisa los logs del servidor)');
-    } catch (error) {
-      toast.error('Error al enviar código');
-    }
-  };
-
-  const handleVerifyCode = async () => {
-    try {
-      await axiosInstance.post('/requests/validate-code', {
-        phone: customForm.phone,
-        code: verificationCode
-      });
-
-      setShowVerification(false);
-      toast.success('Teléfono verificado');
-      await submitCustomRequest();
-    } catch (error) {
-      toast.error('Código inválido');
-    }
-  };
-
   const submitCustomRequest = async () => {
     if (!customForm.name) {
       toast.error('Ingresa el nombre del artículo');
+      return;
+    }
+
+    if (!customForm.phone) {
+      toast.error('Ingresa tu número de teléfono');
       return;
     }
 
@@ -254,13 +222,15 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
         imageInfo = customForm.image_file ? ' | Imagen adjunta' : ` | Imagen: ${customForm.image_url}`;
       }
 
+      const fullPhone = `+504${customForm.phone}`;
+
       await axiosInstance.post('/requests/custom', {
-        phone: customForm.phone,
+        phone: fullPhone,
         description: `${customForm.name}${customForm.description ? ' - ' + customForm.description : ''}${imageInfo}`,
         quantity: customForm.quantity
       });
 
-      toast.success('¡Solicitud enviada! Te contactaremos pronto');
+      toast.success('¡Solicitud creada exitosamente! Te contactaremos pronto');
       setShowCustomModal(false);
       resetCustomForm();
     } catch (error) {
