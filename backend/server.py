@@ -510,28 +510,18 @@ async def create_custom_request(data: dict):
     """Request custom/non-existent product"""
     phone = data["phone"]
     
-    # Check if phone is verified
-    verified = await db.verified_phones.find_one({"phone": phone})
-    if not verified:
-        raise HTTPException(status_code=400, detail="Teléfono no verificado")
-    
     # Create request
     request_obj = CustomRequest(
         phone=phone,
         description=data["description"],
         quantity=data["quantity"],
-        verified=True
+        verified=False
     )
     
     request_doc = request_obj.model_dump()
     request_doc['created_at'] = request_doc['created_at'].isoformat()
     
     await db.custom_requests.insert_one(request_doc)
-    
-    # Update last_used
-    await db.verified_phones.update_one(
-        {"phone": phone},
-        {"$set": {"last_used": datetime.now(timezone.utc).isoformat()}}
     )
     
     # Mock notification
