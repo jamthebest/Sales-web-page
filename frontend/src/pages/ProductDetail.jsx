@@ -350,67 +350,9 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
               </div>
             )}
 
-            {/* Custom Request */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 space-y-4" data-testid="custom-request-section">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white">¿No encuentras lo que buscas?</h3>
-              <p className="text-gray-600 dark:text-gray-400">Solicita un artículo personalizado</p>
-              <Button
-                onClick={() => {
-                  if (!phone) {
-                    toast.error('Ingresa tu teléfono primero');
-                    return;
-                  }
-                  handleRequestVerification('custom');
-                }}
-                variant="outline"
-                className="w-full py-6 text-lg rounded-full border-2 border-sky-600 dark:border-sky-400 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20"
-                data-testid="custom-request-btn"
-              >
-                Solicitar Artículo Personalizado
-              </Button>
-            </div>
           </div>
         </div>
       </div>
-
-      {/* Verification Dialog */}
-      <Dialog open={showVerification} onOpenChange={setShowVerification}>
-        <DialogContent className="dark:bg-gray-800" data-testid="verification-dialog">
-          <DialogHeader>
-            <DialogTitle className="dark:text-white">Verificar Teléfono</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Hemos enviado un código de verificación al número {phone}
-            </p>
-            {mockCode && (
-              <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
-                <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-300">MOCK: Código de prueba</p>
-                <p className="text-2xl font-bold text-yellow-900 dark:text-yellow-200 mt-2">{mockCode}</p>
-                <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">También visible en los logs del servidor</p>
-              </div>
-            )}
-            <Input
-              type="text"
-              placeholder="Ingresa el código"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-              className="text-center text-2xl tracking-widest"
-              data-testid="verification-code-input"
-            />
-            <Button
-              onClick={handleVerifyCode}
-              className="w-full bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700"
-              data-testid="verify-code-btn"
-            >
-              Verificar
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Custom Request Dialog */}
-      <Dialog open={showCustomRequest} onOpenChange={setShowCustomRequest}>
         <DialogContent className="dark:bg-gray-800" data-testid="custom-request-dialog">
           <DialogHeader>
             <DialogTitle className="dark:text-white">Solicitud de Artículo Personalizado</DialogTitle>
