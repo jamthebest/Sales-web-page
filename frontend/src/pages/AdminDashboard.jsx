@@ -315,11 +315,12 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
         </h1>
 
         <Tabs defaultValue="inventory" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="inventory" data-testid="inventory-tab">Inventario</TabsTrigger>
             <TabsTrigger value="stock" data-testid="stock-tab">Gestión Stock</TabsTrigger>
             <TabsTrigger value="requests" data-testid="requests-tab">Solicitudes</TabsTrigger>
             <TabsTrigger value="custom" data-testid="custom-tab">Solicitudes Especiales</TabsTrigger>
+            <TabsTrigger value="completed" data-testid="completed-tab">Finalizadas</TabsTrigger>
             <TabsTrigger value="config" data-testid="config-tab">Configuración</TabsTrigger>
           </TabsList>
 
