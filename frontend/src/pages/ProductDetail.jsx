@@ -273,10 +273,9 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <Button
                   onClick={handlePurchaseRequest}
                   className="w-full bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700 py-6 text-lg rounded-full"
-                  disabled={!user}
                   data-testid="purchase-request-btn"
                 >
-                  {user ? 'Enviar Solicitud' : 'Inicia sesión para solicitar'}
+                  Enviar Solicitud
                 </Button>
               </div>
             )}
