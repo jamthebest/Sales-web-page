@@ -610,29 +610,37 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 dark:text-white">
                       <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                      Solicitudes de Artículos Sin Stock ({requests.out_of_stock_requests?.length || 0})
+                      Solicitudes de Artículos Sin Stock Pendientes ({requests.out_of_stock_requests?.filter(r => r.status !== 'completed').length || 0})
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {requests.out_of_stock_requests?.length > 0 ? (
+                    {requests.out_of_stock_requests?.filter(r => r.status !== 'completed').length > 0 ? (
                       <div className="space-y-4">
-                        {requests.out_of_stock_requests.map((req) => (
+                        {requests.out_of_stock_requests.filter(r => r.status !== 'completed').map((req) => (
                           <div key={req.id} className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border-2 border-orange-200 dark:border-orange-800" data-testid={`outofstock-request-${req.id}`}>
                             <div className="flex justify-between items-start mb-2">
                               <h4 className="font-bold text-lg text-gray-800 dark:text-white">{req.product_name}</h4>
                               <span className="text-xs text-gray-500 dark:text-gray-400">{new Date(req.created_at).toLocaleString('es-MX')}</span>
                             </div>
-                            <div className="grid grid-cols-2 gap-2 text-sm dark:text-gray-300">
+                            <div className="grid grid-cols-2 gap-2 text-sm dark:text-gray-300 mb-3">
                               <div><span className="font-semibold">Teléfono:</span> {req.phone}</div>
                               <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
                               <div><span className="font-semibold">Verificado:</span> {req.verified ? '✅ Sí' : '❌ No'}</div>
                             </div>
+                            <Button
+                              onClick={() => handleCompleteOutOfStockRequest(req.id)}
+                              className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
+                              size="sm"
+                            >
+                              <CheckCircle2 className="w-4 h-4 mr-2" />
+                              Marcar como Completada
+                            </Button>
                           </div>
                         ))}
                       </div>
                     ) : (
                       <div className="text-center py-8">
-                        <p className="text-gray-500 dark:text-gray-400">No hay solicitudes de artículos sin stock</p>
+                        <p className="text-gray-500 dark:text-gray-400">No hay solicitudes de artículos sin stock pendientes</p>
                       </div>
                     )}
                   </CardContent>
@@ -643,18 +651,18 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 dark:text-white">
                       <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                      Solicitudes Personalizadas ({requests.custom_requests?.length || 0})
+                      Solicitudes Personalizadas Pendientes ({requests.custom_requests?.filter(r => r.status !== 'completed').length || 0})
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {requests.custom_requests?.length > 0 ? (
+                    {requests.custom_requests?.filter(r => r.status !== 'completed').length > 0 ? (
                       <div className="space-y-4">
-                        {requests.custom_requests.map((req) => (
+                        {requests.custom_requests.filter(r => r.status !== 'completed').map((req) => (
                           <div key={req.id} className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border-2 border-purple-200 dark:border-purple-800" data-testid={`custom-request-${req.id}`}>
                             <div className="flex justify-between items-start mb-3">
                               <span className="text-xs text-gray-500 dark:text-gray-400">{new Date(req.created_at).toLocaleString('es-MX')}</span>
                             </div>
-                            <div className="space-y-2 text-sm">
+                            <div className="space-y-2 text-sm mb-3">
                               <div className="bg-white dark:bg-gray-700 p-3 rounded">
                                 <span className="font-semibold block mb-1 dark:text-white">Descripción:</span>
                                 <p className="text-gray-700 dark:text-gray-300">{req.description}</p>
@@ -664,12 +672,20 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                                 <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
                               </div>
                             </div>
+                            <Button
+                              onClick={() => handleCompleteCustomRequest(req.id)}
+                              className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
+                              size="sm"
+                            >
+                              <CheckCircle2 className="w-4 h-4 mr-2" />
+                              Marcar como Completada
+                            </Button>
                           </div>
                         ))}
                       </div>
                     ) : (
                       <div className="text-center py-8">
-                        <p className="text-gray-500 dark:text-gray-400">No hay solicitudes personalizadas</p>
+                        <p className="text-gray-500 dark:text-gray-400">No hay solicitudes personalizadas pendientes</p>
                       </div>
                     )}
                   </CardContent>
