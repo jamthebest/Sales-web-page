@@ -35,11 +35,6 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   };
 
   const handlePurchaseRequest = async () => {
-    if (!user) {
-      toast.error('Debes iniciar sesión para realizar una solicitud');
-      return;
-    }
-
     if (!phone) {
       toast.error('Ingresa tu número de teléfono');
       return;
@@ -49,8 +44,8 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
       const fullPhone = `+504${phone}`;
       
       await axiosInstance.post('/requests/purchase', {
-        user_email: user.email,
-        user_name: user.name,
+        user_email: user?.email || 'invitado@ejemplo.com',
+        user_name: user?.name || 'Invitado',
         user_phone: fullPhone,
         product_id: product.id,
         quantity
