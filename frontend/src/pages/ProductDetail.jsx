@@ -86,11 +86,6 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Error al enviar solicitud');
     }
-      setCustomDescription('');
-      setQuantity(1);
-    } catch (error) {
-      toast.error('Error al enviar solicitud');
-    }
   };
 
   if (loading) {
