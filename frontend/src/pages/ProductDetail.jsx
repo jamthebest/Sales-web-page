@@ -16,13 +16,6 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [phone, setPhone] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [showVerification, setShowVerification] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
-  const [requestType, setRequestType] = useState(null);
-  const [customDescription, setCustomDescription] = useState('');
-  const [showCustomRequest, setShowCustomRequest] = useState(false);
-  const [mockCode, setMockCode] = useState('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
