@@ -353,53 +353,6 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
           </div>
         </div>
       </div>
-        <DialogContent className="dark:bg-gray-800" data-testid="custom-request-dialog">
-          <DialogHeader>
-            <DialogTitle className="dark:text-white">Solicitud de Artículo Personalizado</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Descripción del artículo</label>
-              <Textarea
-                placeholder="Describe el artículo que necesitas..."
-                value={customDescription}
-                onChange={(e) => setCustomDescription(e.target.value)}
-                rows={4}
-                data-testid="custom-description-input"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Cantidad</label>
-              <div className="flex items-center gap-4">
-                <Button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full"
-                >
-                  <Minus className="w-4 h-4" />
-                </Button>
-                <span className="text-2xl font-bold w-12 text-center dark:text-white">{quantity}</span>
-                <Button
-                  onClick={() => setQuantity(quantity + 1)}
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-            <Button
-              onClick={handleCustomRequest}
-              className="w-full bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700"
-              data-testid="submit-custom-request-btn"
-            >
-              Enviar Solicitud
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
