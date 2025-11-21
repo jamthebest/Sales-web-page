@@ -570,16 +570,25 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
               <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">
                 Teléfono de Contacto *
               </label>
-              <Input
-                type="tel"
-                placeholder="+52 123 456 7890"
-                value={customForm.phone}
-                onChange={(e) => setCustomForm({ ...customForm, phone: e.target.value })}
-                className="text-base py-6 border-2"
-                data-testid="custom-phone-input"
-                required
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Se enviará un código de verificación</p>
+              <div className="flex gap-2">
+                <select 
+                  disabled
+                  className="w-28 px-3 py-3 text-base border-2 border-gray-200 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  value="+504"
+                >
+                  <option value="+504">🇭🇳 +504</option>
+                </select>
+                <Input
+                  type="tel"
+                  placeholder="1234 5678"
+                  value={customForm.phone}
+                  onChange={(e) => setCustomForm({ ...customForm, phone: e.target.value.replace(/\D/g, '') })}
+                  className="flex-1 text-base py-6 border-2"
+                  data-testid="custom-phone-input"
+                  required
+                />
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Ingresa tu número de teléfono de Honduras</p>
             </div>
 
             <Button
