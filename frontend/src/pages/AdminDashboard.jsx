@@ -73,6 +73,36 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
     }
   };
 
+  const handleCompletePurchaseRequest = async (requestId) => {
+    try {
+      await axiosInstance.put(`/requests/purchase/${requestId}/complete`);
+      toast.success('Solicitud marcada como completada');
+      fetchRequests();
+    } catch (error) {
+      toast.error('Error al completar solicitud');
+    }
+  };
+
+  const handleCompleteOutOfStockRequest = async (requestId) => {
+    try {
+      await axiosInstance.put(`/requests/out-of-stock/${requestId}/complete`);
+      toast.success('Solicitud marcada como completada');
+      fetchRequests();
+    } catch (error) {
+      toast.error('Error al completar solicitud');
+    }
+  };
+
+  const handleCompleteCustomRequest = async (requestId) => {
+    try {
+      await axiosInstance.put(`/requests/custom/${requestId}/complete`);
+      toast.success('Solicitud marcada como completada');
+      fetchRequests();
+    } catch (error) {
+      toast.error('Error al completar solicitud');
+    }
+  };
+
   const handleCreateProduct = () => {
     setEditingProduct(null);
     setProductForm({
