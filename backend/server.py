@@ -517,7 +517,6 @@ async def create_custom_request(data: dict):
     request_doc['created_at'] = request_doc['created_at'].isoformat()
     
     await db.custom_requests.insert_one(request_doc)
-    )
     
     # Mock notification
     logger.info(f"📧 MOCK EMAIL: Solicitud de artículo personalizado #{request_obj.id}")
