@@ -602,41 +602,6 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
         </DialogContent>
       </Dialog>
 
-      {/* Verification Dialog */}
-      <Dialog open={showVerification} onOpenChange={setShowVerification}>
-        <DialogContent className="dark:bg-gray-800" data-testid="verification-dialog">
-          <DialogHeader>
-            <DialogTitle>Verificar Teléfono</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Hemos enviado un código de verificación al número {customForm.phone}
-            </p>
-            {mockCode && (
-              <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
-                <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-300">MOCK: Código de prueba</p>
-                <p className="text-2xl font-bold text-yellow-900 dark:text-yellow-200 mt-2">{mockCode}</p>
-                <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">También visible en los logs del servidor</p>
-              </div>
-            )}
-            <Input
-              type="text"
-              placeholder="Ingresa el código"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-              className="text-center text-2xl tracking-widest"
-              data-testid="verification-code-input"
-            />
-            <Button
-              onClick={handleVerifyCode}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-              data-testid="verify-code-btn"
-            >
-              Verificar
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
