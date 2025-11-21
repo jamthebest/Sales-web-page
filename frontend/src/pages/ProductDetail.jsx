@@ -46,15 +46,17 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
     }
 
     try {
+      const fullPhone = `+504${phone}`;
+      
       await axiosInstance.post('/requests/purchase', {
         user_email: user.email,
         user_name: user.name,
-        user_phone: phone,
+        user_phone: fullPhone,
         product_id: product.id,
         quantity
       });
 
-      toast.success('¡Solicitud de compra enviada!');
+      toast.success('¡Solicitud de compra creada exitosamente!');
       fetchProduct();
       setQuantity(1);
       setPhone('');
@@ -63,84 +65,27 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
     }
   };
 
-  const handleRequestVerification = async (type) => {
+  const handleOutOfStockRequest = async () => {
     if (!phone) {
       toast.error('Ingresa tu número de teléfono');
       return;
     }
 
     try {
-      const response = await axiosInstance.post('/requests/verify-phone', { phone });
+      const fullPhone = `+504${phone}`;
       
-      if (response.data.already_verified) {
-        setIsVerified(true);
-        setRequestType(type);
-        if (type === 'outofstock') {
-          await submitOutOfStockRequest();
-        }
-        return;
-      }
-
-      setMockCode(response.data.mock_code);
-      setShowVerification(true);
-      setRequestType(type);
-      toast.success('Código enviado (revisa los logs del servidor)');
-    } catch (error) {
-      toast.error('Error al enviar código');
-    }
-  };
-
-  const handleVerifyCode = async () => {
-    try {
-      await axiosInstance.post('/requests/validate-code', {
-        phone,
-        code: verificationCode
-      });
-
-      setIsVerified(true);
-      setShowVerification(false);
-      toast.success('Teléfono verificado');
-
-      if (requestType === 'outofstock') {
-        await submitOutOfStockRequest();
-      } else if (requestType === 'custom') {
-        setShowCustomRequest(true);
-      }
-    } catch (error) {
-      toast.error('Código inválido');
-    }
-  };
-
-  const submitOutOfStockRequest = async () => {
-    try {
       await axiosInstance.post('/requests/out-of-stock', {
         product_id: product.id,
-        phone,
+        phone: fullPhone,
         quantity
       });
 
-      toast.success('¡Solicitud enviada! Te contactaremos cuando haya stock');
+      toast.success('¡Solicitud creada exitosamente! Te contactaremos cuando haya stock');
       setQuantity(1);
+      setPhone('');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Error al enviar solicitud');
     }
-  };
-
-  const handleCustomRequest = async () => {
-    if (!customDescription) {
-      toast.error('Describe el artículo que necesitas');
-      return;
-    }
-
-    try {
-      await axiosInstance.post('/requests/custom', {
-        phone,
-        description: customDescription,
-        quantity
-      });
-
-      toast.success('¡Solicitud enviada! Te contactaremos pronto');
-      setShowCustomRequest(false);
       setCustomDescription('');
       setQuantity(1);
     } catch (error) {
