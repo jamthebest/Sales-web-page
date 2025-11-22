@@ -120,7 +120,7 @@ const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
                   <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{product.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-2xl font-bold text-sky-600 dark:text-sky-400" data-testid={`product-price-${product.id}`}>
-                      ${product.price.toFixed(2)}
+                      Lps {product.price.toFixed(2)}
                     </span>
                     <span className="text-sm text-gray-500 dark:text-gray-400" data-testid={`product-stock-${product.id}`}>
                       Stock: {product.stock}

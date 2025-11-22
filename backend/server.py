@@ -403,7 +403,7 @@ async def create_purchase_request(data: dict):
     logger.info(f"📧 MOCK EMAIL: Solicitud de compra #{purchase.id}")
     logger.info(f"   Cliente: {purchase.user_name} ({purchase.user_email})")
     logger.info(f"   Producto: {purchase.product_name} x{purchase.quantity}")
-    logger.info(f"   Total: ${purchase.total_price:.2f}")
+    logger.info(f"   Total: Lps {purchase.total_price:.2f}")
     logger.info(f"   Teléfono: {purchase.user_phone}")
     
     return purchase

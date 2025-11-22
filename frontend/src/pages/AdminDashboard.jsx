@@ -387,7 +387,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                     <h3 className="font-bold text-lg mb-1" data-testid={`admin-product-name-${product.id}`}>{product.name}</h3>
                     <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
                     <div className="flex justify-between items-center mb-4">
-                      <span className="text-xl font-bold text-sky-600" data-testid={`admin-product-price-${product.id}`}>${product.price.toFixed(2)}</span>
+                      <span className="text-xl font-bold text-sky-600" data-testid={`admin-product-price-${product.id}`}>Lps {product.price.toFixed(2)}</span>
                       <span className="text-sm font-semibold" data-testid={`admin-product-stock-${product.id}`}>
                         Stock: <span className={product.stock === 0 ? 'text-red-600' : product.stock < 10 ? 'text-orange-600' : 'text-emerald-600'}>{product.stock}</span>
                       </span>
@@ -571,7 +571,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                             <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
                             <div className="col-span-2">
                               <span className="font-semibold">Total:</span> 
-                              <span className="text-xl font-bold text-sky-600 dark:text-sky-400 ml-2">${req.total_price.toFixed(2)}</span>
+                              <span className="text-xl font-bold text-sky-600 dark:text-sky-400 ml-2">Lps {req.total_price.toFixed(2)}</span>
                             </div>
                           </div>
                           <Button
@@ -733,7 +733,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                               <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
                               <div className="col-span-2">
                                 <span className="font-semibold">Total:</span> 
-                                <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 ml-2">${req.total_price.toFixed(2)}</span>
+                                <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 ml-2">Lps {req.total_price.toFixed(2)}</span>
                               </div>
                             </div>
                           </div>
@@ -1215,7 +1215,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <div className="flex-1">
                   <p className="font-semibold text-lg dark:text-white">{productToDelete.name}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Stock: {productToDelete.stock} unidades</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Precio: ${productToDelete.price.toFixed(2)}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Precio: Lps {productToDelete.price.toFixed(2)}</p>
                 </div>
               </div>
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">

@@ -390,7 +390,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                       <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{product.description}</p>
                       <div className="flex justify-between items-center">
                         <span className="text-2xl font-bold text-sky-600 dark:text-sky-400" data-testid={`product-price-${product.id}`}>
-                          ${product.price.toFixed(2)}
+                          Lps {product.price.toFixed(2)}
                         </span>
                         <span className="text-sm text-gray-500 dark:text-gray-400" data-testid={`product-stock-${product.id}`}>
                           Stock: {product.stock}
@@ -568,7 +568,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                 Teléfono de Contacto *
               </label>
               <div className="flex gap-2">
-                <select 
+                <select
                   disabled
                   className="w-28 px-3 py-3 text-base border-2 border-gray-200 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   value="+504"
