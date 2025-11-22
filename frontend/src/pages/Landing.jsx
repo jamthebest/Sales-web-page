@@ -31,7 +31,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
     image_url: '',
     image_file: null,
     quantity: 1,
-    phone: ''
+    phone: localStorage.getItem('user_phone') || ''
   });
   const [imagePreview, setImagePreview] = useState('');
   const [isHeaderStuck, setIsHeaderStuck] = useState(false);
@@ -60,7 +60,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
 
   useEffect(() => {
     if (debouncedSearchTerm) {
-      const filtered = products.filter(p => 
+      const filtered = products.filter(p =>
         p.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
         p.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
         (p.category && p.category.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
@@ -134,7 +134,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
       if (stickyHeaderRef.current && bottomBannerRef.current) {
         const bannerRect = bottomBannerRef.current.getBoundingClientRect();
         const headerHeight = stickyHeaderRef.current.offsetHeight;
-        
+
         if (bannerRect.top <= headerHeight + 64) { // 64px is navbar height
           stickyHeaderRef.current.style.position = 'relative';
         } else {
@@ -158,13 +158,13 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
 
   const loadMoreProducts = () => {
     if (loading) return;
-    
+
     setLoading(true);
     const productsToDisplay = debouncedSearchTerm ? filteredProducts : products;
     const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
     const endIndex = startIndex + PRODUCTS_PER_PAGE;
     const newProducts = productsToDisplay.slice(startIndex, endIndex);
-    
+
     if (newProducts.length > 0) {
       setTimeout(() => {
         setDisplayedProducts(prev => {
@@ -192,7 +192,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
         toast.error('La imagen debe ser menor a 5MB');
         return;
       }
-      
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -219,7 +219,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
         imageInfo = customForm.image_file ? ' | Imagen adjunta' : ` | Imagen: ${customForm.image_url}`;
       }
 
-      const fullPhone = `+504${customForm.phone}`;
+      const fullPhone = `+504 ${customForm.phone}`;
 
       await axiosInstance.post('/requests/custom', {
         phone: fullPhone,
@@ -228,6 +228,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
       });
 
       toast.success('¡Solicitud creada exitosamente! Te contactaremos pronto');
+      localStorage.setItem('user_phone', customForm.phone);
       setShowCustomModal(false);
       resetCustomForm();
     } catch (error) {
@@ -247,7 +248,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
       image_url: '',
       image_file: null,
       quantity: 1,
-      phone: ''
+      phone: localStorage.getItem('user_phone') || ''
     });
     setImagePreview('');
     setVerificationCode('');
@@ -273,20 +274,19 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
         <div ref={headerSentinelRef} className="h-1" />
 
         {/* Sticky Products Header */}
-        <div 
+        <div
           ref={stickyHeaderRef}
-          className={`sticky top-16 z-40 py-6 mb-6 transition-all duration-300 ${
-            isHeaderStuck 
-              ? 'backdrop-blur-md bg-gradient-to-br from-sky-50/90 via-white/90 to-emerald-50/90 dark:from-gray-900/90 dark:via-gray-800/90 dark:to-gray-900/90 border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm' 
+          className={`sticky top-16 z-40 py-6 mb-6 transition-all duration-300 ${isHeaderStuck
+              ? 'backdrop-blur-md bg-gradient-to-br from-sky-50/90 via-white/90 to-emerald-50/90 dark:from-gray-900/90 dark:via-gray-800/90 dark:to-gray-900/90 border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm'
               : 'bg-transparent'
-          }`}
+            }`}
         >
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
             {/* Title */}
             <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 dark:from-sky-400 dark:to-emerald-400 bg-clip-text text-transparent flex-shrink-0" data-testid="products-section-title">
               Nuestros Productos
             </h2>
-            
+
             {/* Search Bar - Center */}
             <div className="relative w-full max-w-xl flex items-center">
               <Search className="absolute left-3 text-gray-400 dark:text-gray-500 w-5 h-5 pointer-events-none" />
@@ -357,9 +357,9 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                   >
                     <div className="aspect-square bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-700 dark:to-gray-600 relative overflow-hidden">
                       {product.image_url ? (
-                        <img 
-                          src={product.image_url} 
-                          alt={product.name} 
+                        <img
+                          src={product.image_url}
+                          alt={product.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
@@ -514,9 +514,9 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                 </div>
                 {imagePreview && (
                   <div className="relative mt-4 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600">
-                    <img 
-                      src={imagePreview} 
-                      alt="Preview" 
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
                       className="w-full h-48 object-cover"
                     />
                     <Button

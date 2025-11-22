@@ -15,7 +15,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState(localStorage.getItem('user_phone') || '');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
@@ -52,9 +52,9 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
       });
 
       toast.success('¡Solicitud de compra creada exitosamente!');
+      localStorage.setItem('user_phone', phone);
       fetchProduct();
       setQuantity(1);
-      setPhone('');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Error al enviar solicitud');
     }
@@ -76,8 +76,8 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
       });
 
       toast.success('¡Solicitud creada exitosamente! Te contactaremos cuando haya stock');
+      localStorage.setItem('user_phone', phone);
       setQuantity(1);
-      setPhone('');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Error al enviar solicitud');
     }
@@ -98,7 +98,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex justify-between items-center mb-8">
           <Button
-            onClick={() => navigate('/products')}
+            onClick={() => navigate('/')}
             variant="ghost"
             data-testid="back-btn"
           >
@@ -212,7 +212,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
             </p>
             <div className="flex items-baseline gap-4">
               <span className="text-5xl font-bold text-sky-600 dark:text-sky-400" data-testid="product-detail-price">
-                ${product.price.toFixed(2)}
+                Lps {product.price.toFixed(2)}
               </span>
               <span className={`text-lg font-semibold ${product.stock > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`} data-testid="product-detail-stock">
                 {product.stock > 0 ? `${product.stock} disponibles` : 'Agotado'}
