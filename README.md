@@ -158,6 +158,7 @@ pip install -r requirements.txt
 Crea un archivo `.env` en el directorio `backend/`:
 
 ```env
+DB_NAME=ecommerce_db
 MONGO_URL=mongodb://localhost:27017/ecommerce_db
 PORT=8001
 ```
