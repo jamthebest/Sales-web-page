@@ -251,8 +251,6 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
       phone: localStorage.getItem('user_phone') || ''
     });
     setImagePreview('');
-    setVerificationCode('');
-    setMockCode('');
   };
 
   return (
@@ -277,8 +275,8 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
         <div
           ref={stickyHeaderRef}
           className={`sticky top-16 z-40 py-6 mb-6 transition-all duration-300 ${isHeaderStuck
-              ? 'backdrop-blur-md bg-gradient-to-br from-sky-50/90 via-white/90 to-emerald-50/90 dark:from-gray-900/90 dark:via-gray-800/90 dark:to-gray-900/90 border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm'
-              : 'bg-transparent'
+            ? 'backdrop-blur-md bg-gradient-to-br from-sky-50/90 via-white/90 to-emerald-50/90 dark:from-gray-900/90 dark:via-gray-800/90 dark:to-gray-900/90 border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm'
+            : 'bg-transparent'
             }`}
         >
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
@@ -455,7 +453,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                 placeholder="Ej: Laptop Gaming RTX 4090"
                 value={customForm.name}
                 onChange={(e) => setCustomForm({ ...customForm, name: e.target.value })}
-                className="text-base py-6 border-2"
+                className="text-base py-6 border-2 dark:border-gray-600"
                 data-testid="custom-name-input"
                 required
               />
@@ -470,7 +468,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                 value={customForm.description}
                 onChange={(e) => setCustomForm({ ...customForm, description: e.target.value })}
                 rows={3}
-                className="text-base border-2"
+                className="text-base border-2 dark:border-gray-600"
                 data-testid="custom-description-input"
               />
             </div>
@@ -489,7 +487,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                       setCustomForm({ ...customForm, image_url: e.target.value, image_file: null });
                       setImagePreview(e.target.value);
                     }}
-                    className="flex-1"
+                    className="flex-1 dark:border-gray-600"
                     data-testid="custom-image-url-input"
                   />
                 </div>
@@ -505,7 +503,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                   />
                   <label htmlFor="image-upload">
                     <Button type="button" variant="outline" className="w-full" asChild>
-                      <span className="cursor-pointer">
+                      <span className="cursor-pointer dark:border-gray-600">
                         <Upload className="w-4 h-4 mr-2" />
                         Subir Imagen (máx 5MB)
                       </span>
@@ -580,7 +578,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                   placeholder="1234 5678"
                   value={customForm.phone}
                   onChange={(e) => setCustomForm({ ...customForm, phone: e.target.value.replace(/\D/g, '') })}
-                  className="flex-1 text-base py-6 border-2"
+                  className="flex-1 text-base py-6 border-2 dark:border-gray-600"
                   data-testid="custom-phone-input"
                   required
                 />
@@ -597,9 +595,9 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
             </Button>
           </form>
         </DialogContent>
-      </Dialog>
+      </Dialog >
 
-    </div>
+    </div >
   );
 };
 

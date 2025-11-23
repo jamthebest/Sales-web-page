@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, Sun, Moon } from 'lucide-react';
 
-const Navbar = ({ user, logout, darkMode, toggleDarkMode, title = 'TiendaApp' }) => {
+const Navbar = ({ user, logout, darkMode, toggleDarkMode, title = 'Sales Web Store' }) => {
   const navigate = useNavigate();
 
   const handleLogin = () => {

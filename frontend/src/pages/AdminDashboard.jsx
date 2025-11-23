@@ -146,7 +146,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
         toast.error('La imagen debe ser menor a 5MB');
         return;
       }
-      
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -170,13 +170,13 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
         toast.error('La imagen debe ser menor a 5MB');
         return;
       }
-      
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        setGalleryImages(prev => [...prev, { 
-          url: reader.result, 
-          description: '', 
-          transform: { scale: 1, x: 50, y: 50 } 
+        setGalleryImages(prev => [...prev, {
+          url: reader.result,
+          description: '',
+          transform: { scale: 1, x: 50, y: 50 }
         }]);
       };
       reader.readAsDataURL(file);
@@ -185,22 +185,22 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
 
   const handleGalleryImageUrl = (url) => {
     if (url.trim()) {
-      setGalleryImages(prev => [...prev, { 
-        url: url.trim(), 
-        description: '', 
-        transform: { scale: 1, x: 50, y: 50 } 
+      setGalleryImages(prev => [...prev, {
+        url: url.trim(),
+        description: '',
+        transform: { scale: 1, x: 50, y: 50 }
       }]);
     }
   };
 
   const updateGalleryImageDescription = (index, description) => {
-    setGalleryImages(prev => prev.map((img, i) => 
+    setGalleryImages(prev => prev.map((img, i) =>
       i === index ? { ...img, description } : img
     ));
   };
 
   const updateGalleryImageTransform = (index, transform) => {
-    setGalleryImages(prev => prev.map((img, i) => 
+    setGalleryImages(prev => prev.map((img, i) =>
       i === index ? { ...img, transform } : img
     ));
   };
@@ -337,7 +337,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <Navbar user={user} logout={logout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} title="TiendaApp Admin" />
+      <Navbar user={user} logout={logout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} title="Sales Web Store Admin" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-sky-600 to-emerald-600 dark:from-sky-400 dark:to-emerald-400 bg-clip-text text-transparent mb-8" data-testid="admin-title">
@@ -361,7 +361,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <h2 className="text-2xl font-bold text-gray-800">Productos</h2>
                 <p className="text-gray-600">Total: {products.length} productos</p>
               </div>
-              <Button 
+              <Button
                 onClick={handleCreateProduct}
                 className="bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700"
                 data-testid="create-product-btn"
@@ -393,18 +393,18 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                       </span>
                     </div>
                     <div className="flex gap-2">
-                      <Button 
-                        onClick={() => handleEditProduct(product)} 
-                        variant="outline" 
+                      <Button
+                        onClick={() => handleEditProduct(product)}
+                        variant="outline"
                         className="flex-1"
                         data-testid={`edit-product-btn-${product.id}`}
                       >
                         <Edit className="w-4 h-4 mr-1" />
                         Editar
                       </Button>
-                      <Button 
-                        onClick={() => handleDeleteProduct(product)} 
-                        variant="outline" 
+                      <Button
+                        onClick={() => handleDeleteProduct(product)}
+                        variant="outline"
                         className="flex-1 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20"
                         data-testid={`delete-product-btn-${product.id}`}
                       >
@@ -439,7 +439,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                     {outOfStockProducts.map(p => (
                       <div key={p.id} className="flex justify-between items-center bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
                         <span className="font-semibold dark:text-white">{p.name}</span>
-                        <Button 
+                        <Button
                           onClick={() => handleOpenStockDialog(p)}
                           size="sm"
                           className="bg-red-600 hover:bg-red-700"
@@ -469,7 +469,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                           <span className="font-semibold dark:text-white">{p.name}</span>
                           <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">Stock: {p.stock}</span>
                         </div>
-                        <Button 
+                        <Button
                           onClick={() => handleOpenStockDialog(p)}
                           size="sm"
                           className="bg-orange-600 hover:bg-orange-700"
@@ -570,7 +570,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                             <div><span className="font-semibold">Teléfono:</span> {req.user_phone}</div>
                             <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
                             <div className="col-span-2">
-                              <span className="font-semibold">Total:</span> 
+                              <span className="font-semibold">Total:</span>
                               <span className="text-xl font-bold text-sky-600 dark:text-sky-400 ml-2">Lps {req.total_price.toFixed(2)}</span>
                             </div>
                           </div>
@@ -732,7 +732,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                               <div><span className="font-semibold">Teléfono:</span> {req.user_phone}</div>
                               <div><span className="font-semibold">Cantidad:</span> {req.quantity}</div>
                               <div className="col-span-2">
-                                <span className="font-semibold">Total:</span> 
+                                <span className="font-semibold">Total:</span>
                                 <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 ml-2">Lps {req.total_price.toFixed(2)}</span>
                               </div>
                             </div>
@@ -816,17 +816,17 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
 
                 {/* No Completed Requests */}
                 {requests.purchase_requests?.filter(r => r.status === 'completed').length === 0 &&
-                 requests.out_of_stock_requests?.filter(r => r.status === 'completed').length === 0 &&
-                 requests.custom_requests?.filter(r => r.status === 'completed').length === 0 && (
-                  <Card className="dark:bg-gray-800 dark:border-gray-700">
-                    <CardContent className="py-12">
-                      <div className="text-center">
-                        <CheckCircle2 className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                        <p className="text-gray-500 dark:text-gray-400">No hay solicitudes completadas aún</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                  requests.out_of_stock_requests?.filter(r => r.status === 'completed').length === 0 &&
+                  requests.custom_requests?.filter(r => r.status === 'completed').length === 0 && (
+                    <Card className="dark:bg-gray-800 dark:border-gray-700">
+                      <CardContent className="py-12">
+                        <div className="text-center">
+                          <CheckCircle2 className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                          <p className="text-gray-500 dark:text-gray-400">No hay solicitudes completadas aún</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
               </>
             )}
           </TabsContent>
@@ -864,7 +864,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                     data-testid="config-phone-input"
                   />
                 </div>
-                <Button 
+                <Button
                   onClick={handleSaveConfig}
                   className="bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700"
                   data-testid="save-config-btn"
@@ -874,7 +874,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
                   <p className="text-sm font-semibold text-yellow-800">Modo Mock Activado</p>
                   <p className="text-xs text-yellow-700 mt-1">
-                    Las notificaciones actualmente se muestran en los logs del servidor. 
+                    Las notificaciones actualmente se muestran en los logs del servidor.
                     Puedes configurar email y teléfono para cuando integres servicios reales.
                   </p>
                 </div>
@@ -898,6 +898,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
                 placeholder="Nombre del producto"
                 data-testid="product-name-input"
+                className="dark:border-gray-600"
               />
             </div>
             <div>
@@ -908,6 +909,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 placeholder="Descripción del producto"
                 rows={3}
                 data-testid="product-description-input"
+                className="dark:border-gray-600"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -920,6 +922,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
                   placeholder="0.00"
                   data-testid="product-price-input"
+                  className="dark:border-gray-600"
                 />
               </div>
               <div>
@@ -930,6 +933,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
                   placeholder="0"
                   data-testid="product-stock-input"
+                  className="dark:border-gray-600"
                 />
               </div>
             </div>
@@ -940,6 +944,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
                 placeholder="Electrónica, Ropa, etc."
                 data-testid="product-category-input"
+                className="dark:border-gray-600"
               />
             </div>
             <div>
@@ -959,7 +964,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                         setImageFile(null);
                       }
                     }}
-                    className="flex-1"
+                    className="flex-1 dark:border-gray-600"
                     data-testid="product-image-url-input"
                   />
                 </div>
@@ -975,7 +980,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   />
                   <label htmlFor="product-image-upload">
                     <Button type="button" variant="outline" className="w-full" asChild>
-                      <span className="cursor-pointer">
+                      <span className="cursor-pointer dark:border-gray-600">
                         <Upload className="w-4 h-4 mr-2" />
                         Subir Imagen (máx 5MB)
                       </span>
@@ -985,9 +990,9 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 {imagePreview && (
                   <div className="relative mt-4 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600 group">
                     <div className="w-full h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden relative flex items-center justify-center">
-                      <img 
-                        src={imagePreview} 
-                        alt="Preview" 
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
                         className="max-w-full max-h-full object-contain"
                         style={{
                           transform: `scale(${mainImageTransform.scale})`,
@@ -1034,7 +1039,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
                 Agrega imágenes adicionales para mostrar una galería en la página de detalle
               </p>
-              
+
               <div className="space-y-3">
                 {/* Add new gallery image */}
                 <div className="flex gap-2">
@@ -1049,7 +1054,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                         e.target.value = '';
                       }
                     }}
-                    className="flex-1"
+                    className="flex-1 dark:border-gray-600"
                   />
                   <Button
                     type="button"
@@ -1065,9 +1070,9 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                     Agregar URL
                   </Button>
                 </div>
-                
+
                 <div className="text-center text-gray-500 dark:text-gray-400 text-sm">o</div>
-                
+
                 <div>
                   <input
                     type="file"
@@ -1093,8 +1098,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                       <div key={index} className="relative border-2 border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden group">
                         {/* Image Preview with Transform */}
                         <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 overflow-hidden relative flex items-center justify-center">
-                          <img 
-                            src={img.url} 
+                          <img
+                            src={img.url}
                             alt={`Galería ${index + 1}`}
                             className="max-w-full max-h-full object-contain"
                             style={{
@@ -1102,7 +1107,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                               transformOrigin: `${img.transform?.x || 50}% ${img.transform?.y || 50}%`
                             }}
                           />
-                          
+
                           {/* Overlay buttons */}
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                             <Button
@@ -1127,14 +1132,14 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                             </Button>
                           </div>
                         </div>
-                        
+
                         <div className="p-2 bg-white dark:bg-gray-800">
                           <Input
                             type="text"
                             placeholder="Descripción (opcional)"
                             value={img.description || ''}
                             onChange={(e) => updateGalleryImageDescription(index, e.target.value)}
-                            className="text-xs h-8"
+                            className="text-xs h-8 dark:border-gray-600"
                           />
                         </div>
                       </div>
@@ -1152,11 +1157,11 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
               {editingProduct ? 'Actualizar Producto' : 'Crear Producto'}
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </DialogContent >
+      </Dialog >
 
       {/* Stock Update Dialog */}
-      <Dialog open={showStockDialog} onOpenChange={setShowStockDialog}>
+      < Dialog open={showStockDialog} onOpenChange={setShowStockDialog} >
         <DialogContent className="dark:bg-gray-800" data-testid="stock-dialog">
           <DialogHeader>
             <DialogTitle className="dark:text-white">Actualizar Stock</DialogTitle>
@@ -1192,10 +1197,10 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
             </div>
           )}
         </DialogContent>
-      </Dialog>
+      </Dialog >
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      < Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} >
         <DialogContent className="dark:bg-gray-800" data-testid="delete-dialog">
           <DialogHeader>
             <DialogTitle className="dark:text-white">Confirmar Eliminación</DialogTitle>
@@ -1248,10 +1253,10 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
             </div>
           )}
         </DialogContent>
-      </Dialog>
+      </Dialog >
 
       {/* Image Editor Dialog */}
-      <Dialog open={editingImageIndex !== null || editingMainImage} onOpenChange={() => {
+      < Dialog open={editingImageIndex !== null || editingMainImage} onOpenChange={() => {
         setEditingImageIndex(null);
         setEditingMainImage(false);
       }}>
@@ -1264,17 +1269,17 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Ajusta cómo se verá la imagen en la galería. Usa el zoom y arrastra la imagen para posicionarla.
               </p>
-              
+
               {/* Image Preview */}
               <div className="relative aspect-square bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-600">
-                <div 
+                <div
                   className="w-full h-full overflow-hidden cursor-move relative flex items-center justify-center"
                   onMouseDown={(e) => {
                     const startX = e.clientX;
                     const startY = e.clientY;
                     const startPosX = imageTransform.x;
                     const startPosY = imageTransform.y;
-                    
+
                     const handleMouseMove = (e) => {
                       const deltaX = (e.clientX - startX) * 0.1;
                       const deltaY = (e.clientY - startY) * 0.1;
@@ -1284,18 +1289,18 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                         y: Math.max(0, Math.min(100, startPosY + deltaY))
                       }));
                     };
-                    
+
                     const handleMouseUp = () => {
                       document.removeEventListener('mousemove', handleMouseMove);
                       document.removeEventListener('mouseup', handleMouseUp);
                     };
-                    
+
                     document.addEventListener('mousemove', handleMouseMove);
                     document.addEventListener('mouseup', handleMouseUp);
                   }}
                 >
-                  <img 
-                    src={editingMainImage ? imagePreview : galleryImages[editingImageIndex].url} 
+                  <img
+                    src={editingMainImage ? imagePreview : galleryImages[editingImageIndex].url}
                     alt="Editor"
                     className="max-w-full max-h-full object-contain"
                     style={{
@@ -1390,8 +1395,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
             </div>
           )}
         </DialogContent>
-      </Dialog>
-    </div>
+      </Dialog >
+    </div >
   );
 };
 
