@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -12,6 +12,7 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import random
 import httpx
+from email_service import send_email
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -367,7 +368,7 @@ async def delete_product(product_id: str, request: Request):
 # ==================== REQUEST ROUTES ====================
 
 @api_router.post("/requests/purchase")
-async def create_purchase_request(data: dict):
+async def create_purchase_request(data: dict, background_tasks: BackgroundTasks):
     """Create purchase request"""
     # Get product
     product = await db.products.find_one({"id": data["product_id"]}, {"_id": 0})
@@ -397,6 +398,20 @@ async def create_purchase_request(data: dict):
     await db.products.update_one(
         {"id": data["product_id"]},
         {"$inc": {"stock": -data["quantity"]}}
+    )
+    
+    # Send email
+    background_tasks.add_task(
+        send_email,
+        destinatary=os.environ['EMAIL_DESTINATARY'],
+        subject="Solicitud de compra",
+        message="""
+        <h1>Nueva solicitud de compra</h1>
+        <p>Cliente: {data["user_name"] or "Anónimo"} ({data["user_email"] or "Anónimo"})</p>
+        <p>Producto: {data["product_name"]} x{data["quantity"]}</p>
+        <p>Total: Lps {data["total_price"]:.2f}</p>
+        <p>Teléfono: {data["user_phone"] or "Anónimo"}</p>
+        """
     )
     
     # Mock notification
@@ -485,6 +500,20 @@ async def create_out_of_stock_request(data: dict):
     request_doc['created_at'] = request_doc['created_at'].isoformat()
     
     await db.out_of_stock_requests.insert_one(request_doc)
+
+    # Send email
+    background_tasks.add_task(
+        send_email,
+        destinatary=os.environ['EMAIL_DESTINATARY'],
+        subject="Solicitud de artículo sin stock",
+        message="""
+        <h1>Nueva solicitud de artículo sin stock</h1>
+        <p>Cliente: {data["user_name"] or "Anónimo"} ({data["user_email"] or "Anónimo"})</p>
+        <p>Producto: {product["name"]}</p>
+        <p>Cantidad: {data["quantity"]}</p>
+        <p>Teléfono: {data["phone"] or "Anónimo"}</p>
+        """
+    )
     
     # Mock notification
     logger.info(f"📧 MOCK EMAIL: Solicitud de artículo sin stock #{request_obj.id}")
@@ -511,6 +540,20 @@ async def create_custom_request(data: dict):
     request_doc['created_at'] = request_doc['created_at'].isoformat()
     
     await db.custom_requests.insert_one(request_doc)
+
+    # Send email
+    background_tasks.add_task(
+        send_email,
+        destinatary=os.environ['EMAIL_DESTINATARY'],
+        subject="Solicitud de artículo personalizado",
+        message="""
+        <h1>Nueva solicitud de artículo personalizado</h1>
+        <p>Cliente: {data["user_name"] or "Anónimo"} ({data["user_email"] or "Anónimo"})</p>
+        <p>Descripción: {data["description"]}</p>
+        <p>Cantidad: {data["quantity"]}</p>
+        <p>Teléfono: {data["phone"] or "Anónimo"}</p>
+        """
+    )
     
     # Mock notification
     logger.info(f"📧 MOCK EMAIL: Solicitud de artículo personalizado #{request_obj.id}")
