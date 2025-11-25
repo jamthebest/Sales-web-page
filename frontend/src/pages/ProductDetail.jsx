@@ -3,11 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../App';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Package, ArrowLeft, Minus, Plus, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
+import SuccessModal from '@/components/SuccessModal';
 
 const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   const { id } = useParams();
@@ -17,6 +16,8 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [quantity, setQuantity] = useState(1);
   const [phone, setPhone] = useState(localStorage.getItem('user_phone') || '');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchProduct();
@@ -51,7 +52,8 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
         quantity
       });
 
-      toast.success('¡Solicitud de compra creada exitosamente!');
+      setSuccessMessage('¡Solicitud de compra creada exitosamente!');
+      setShowSuccessModal(true);
       localStorage.setItem('user_phone', phone);
       fetchProduct();
       setQuantity(1);
@@ -77,7 +79,8 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
         quantity
       });
 
-      toast.success('¡Solicitud creada exitosamente! Te contactaremos cuando haya stock');
+      setSuccessMessage('¡Solicitud creada exitosamente! Te contactaremos cuando haya stock');
+      setShowSuccessModal(true);
       localStorage.setItem('user_phone', phone);
       setQuantity(1);
     } catch (error) {
@@ -180,8 +183,8 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                         key={index}
                         onClick={() => setSelectedImageIndex(index)}
                         className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
-                            ? 'border-sky-500 dark:border-sky-400 shadow-lg'
-                            : 'border-gray-200 dark:border-gray-700 hover:border-sky-300 dark:hover:border-sky-600'
+                          ? 'border-sky-500 dark:border-sky-400 shadow-lg'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-sky-300 dark:hover:border-sky-600'
                           }`}
                       >
                         <img
@@ -343,6 +346,12 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
           </div>
         </div>
       </div>
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message={successMessage}
+      />
     </div>
   );
 };

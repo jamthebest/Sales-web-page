@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Package, Plus, Sparkles, Upload, Minus, X, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
+import SuccessModal from '@/components/SuccessModal';
 
 const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
   const navigate = useNavigate();
@@ -35,6 +36,8 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
   });
   const [imagePreview, setImagePreview] = useState('');
   const [isHeaderStuck, setIsHeaderStuck] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const PRODUCTS_PER_PAGE = 6;
 
   useEffect(() => {
@@ -229,7 +232,8 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
         quantity: customForm.quantity
       });
 
-      toast.success('¡Solicitud creada exitosamente! Te contactaremos pronto');
+      setSuccessMessage('¡Solicitud creada exitosamente! Te contactaremos pronto');
+      setShowSuccessModal(true);
       localStorage.setItem('user_phone', customForm.phone);
       setShowCustomModal(false);
       resetCustomForm();
@@ -599,6 +603,11 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
         </DialogContent>
       </Dialog >
 
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message={successMessage}
+      />
     </div >
   );
 };
