@@ -83,6 +83,16 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
     }
   };
 
+  const handleRejectPurchaseRequest = async (requestId) => {
+    try {
+      await axiosInstance.put(`/requests/purchase/${requestId}/reject`);
+      toast.success('Solicitud rechazada y stock restituido');
+      fetchRequests();
+    } catch (error) {
+      toast.error('Error al rechazar solicitud');
+    }
+  };
+
   const handleCompleteOutOfStockRequest = async (requestId) => {
     try {
       await axiosInstance.put(`/requests/out-of-stock/${requestId}/complete`);
@@ -547,13 +557,13 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 dark:text-white">
                     <ShoppingCart className="w-5 h-5" />
-                    Solicitudes de Compra Pendientes ({requests.purchase_requests?.filter(r => r.status !== 'completed').length || 0})
+                    Solicitudes de Compra Pendientes ({requests.purchase_requests?.filter(r => r.status === 'pending').length || 0})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {requests.purchase_requests?.filter(r => r.status !== 'completed').length > 0 ? (
+                  {requests.purchase_requests?.filter(r => r.status === 'pending').length > 0 ? (
                     <div className="space-y-4">
-                      {requests.purchase_requests.filter(r => r.status !== 'completed').map((req) => (
+                      {requests.purchase_requests.filter(r => r.status === 'pending').map((req) => (
                         <div key={req.id} className="bg-white dark:bg-gray-700 p-4 rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-sky-300 dark:hover:border-sky-500 transition-colors" data-testid={`purchase-request-${req.id}`}>
                           <div className="flex justify-between items-start mb-3">
                             <div>
@@ -574,14 +584,25 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                               <span className="text-xl font-bold text-sky-600 dark:text-sky-400 ml-2">Lps {req.total_price.toFixed(2)}</span>
                             </div>
                           </div>
-                          <Button
-                            onClick={() => handleCompletePurchaseRequest(req.id)}
-                            className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
-                            size="sm"
-                          >
-                            <CheckCircle2 className="w-4 h-4 mr-2" />
-                            Marcar como Completada
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={() => handleCompletePurchaseRequest(req.id)}
+                              className="flex-1 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
+                              size="sm"
+                            >
+                              <CheckCircle2 className="w-4 h-4 mr-2" />
+                              Completar
+                            </Button>
+                            <Button
+                              onClick={() => handleRejectPurchaseRequest(req.id)}
+                              variant="destructive"
+                              size="sm"
+                              className="flex-1"
+                            >
+                              <X className="w-4 h-4 mr-2" />
+                              Rechazar
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>

@@ -610,6 +610,33 @@ async def complete_purchase_request(request_id: str, request: Request):
     
     return {"message": "Solicitud marcada como completada"}
 
+@api_router.put("/requests/purchase/{request_id}/reject")
+async def reject_purchase_request(request_id: str, request: Request):
+    """Mark a purchase request as rejected and restitute stock"""
+    await require_admin(request)
+    
+    # Get the request first to know the quantity and product
+    purchase_request = await db.purchase_requests.find_one({"id": request_id})
+    if not purchase_request:
+        raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+        
+    if purchase_request["status"] != "pending":
+        raise HTTPException(status_code=400, detail="La solicitud ya ha sido procesada")
+    
+    # Update request status
+    await db.purchase_requests.update_one(
+        {"id": request_id},
+        {"$set": {"status": "rejected"}}
+    )
+    
+    # Restitute stock
+    await db.products.update_one(
+        {"id": purchase_request["product_id"]},
+        {"$inc": {"stock": purchase_request["quantity"]}}
+    )
+    
+    return {"message": "Solicitud rechazada y stock restituido"}
+
 @api_router.put("/requests/out-of-stock/{request_id}/complete")
 async def complete_out_of_stock_request(request_id: str, request: Request):
     """Mark an out-of-stock request as completed"""
