@@ -719,33 +719,40 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
           <TabsContent value="completed" className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Solicitudes Finalizadas</h2>
-              <p className="text-gray-600 dark:text-gray-400">Historial de todas las solicitudes completadas</p>
+              <p className="text-gray-600 dark:text-gray-400">Historial de todas las solicitudes completadas y rechazadas</p>
             </div>
 
             {requests && (
               <>
                 {/* Completed Purchase Requests */}
-                {requests.purchase_requests?.filter(r => r.status === 'completed').length > 0 && (
+                {requests.purchase_requests?.filter(r => r.status === 'completed' || r.status === 'rejected').length > 0 && (
                   <Card className="dark:bg-gray-800 dark:border-gray-700">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 dark:text-white">
                         <ShoppingCart className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                        Solicitudes de Compra Completadas ({requests.purchase_requests?.filter(r => r.status === 'completed').length || 0})
+                        Solicitudes de Compra Finalizadas ({requests.purchase_requests?.filter(r => r.status === 'completed' || r.status === 'rejected').length || 0})
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {requests.purchase_requests.filter(r => r.status === 'completed').map((req) => (
-                          <div key={req.id} className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg border-2 border-emerald-200 dark:border-emerald-800" data-testid={`completed-purchase-${req.id}`}>
+                        {requests.purchase_requests.filter(r => r.status === 'completed' || r.status === 'rejected').map((req) => (
+                          <div key={req.id} className={`p-4 rounded-lg border-2 ${req.status === 'rejected' ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800'}`} data-testid={`completed-purchase-${req.id}`}>
                             <div className="flex justify-between items-start mb-3">
                               <div>
                                 <h4 className="font-bold text-lg text-gray-800 dark:text-white">{req.product_name}</h4>
                                 <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(req.created_at).toLocaleString('es-MX')}</p>
                               </div>
-                              <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-full text-sm font-semibold flex items-center gap-1">
-                                <Check className="w-4 h-4" />
-                                Completada
-                              </span>
+                              {req.status === 'completed' ? (
+                                <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-full text-sm font-semibold flex items-center gap-1">
+                                  <Check className="w-4 h-4" />
+                                  Completada
+                                </span>
+                              ) : (
+                                <span className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-full text-sm font-semibold flex items-center gap-1">
+                                  <X className="w-4 h-4" />
+                                  Rechazada
+                                </span>
+                              )}
                             </div>
                             <div className="grid grid-cols-2 gap-3 text-sm dark:text-gray-300">
                               <div><span className="font-semibold">Cliente:</span> {req.user_name}</div>
@@ -836,7 +843,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 )}
 
                 {/* No Completed Requests */}
-                {requests.purchase_requests?.filter(r => r.status === 'completed').length === 0 &&
+                {requests.purchase_requests?.filter(r => r.status === 'completed' || r.status === 'rejected').length === 0 &&
                   requests.out_of_stock_requests?.filter(r => r.status === 'completed').length === 0 &&
                   requests.custom_requests?.filter(r => r.status === 'completed').length === 0 && (
                     <Card className="dark:bg-gray-800 dark:border-gray-700">
@@ -902,11 +909,11 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
-      </div>
+        </Tabs >
+      </div >
 
       {/* Product Dialog */}
-      <Dialog open={showProductDialog} onOpenChange={setShowProductDialog}>
+      < Dialog open={showProductDialog} onOpenChange={setShowProductDialog} >
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-gray-800" data-testid="product-dialog">
           <DialogHeader>
             <DialogTitle className="dark:text-white">{editingProduct ? 'Editar Producto' : 'Nuevo Producto'}</DialogTitle>
