@@ -222,6 +222,8 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
       const fullPhone = `+504 ${customForm.phone}`;
 
       await axiosInstance.post('/requests/custom', {
+        user_email: user?.email || 'invitado@ejemplo.com',
+        user_name: user?.name || 'Invitado',
         phone: fullPhone,
         description: `${customForm.name}${customForm.description ? ' - ' + customForm.description : ''}${imageInfo}`,
         quantity: customForm.quantity

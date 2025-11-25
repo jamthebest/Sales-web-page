@@ -42,7 +42,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
 
     try {
       const fullPhone = `+504${phone}`;
-      
+
       await axiosInstance.post('/requests/purchase', {
         user_email: user?.email || 'invitado@ejemplo.com',
         user_name: user?.name || 'Invitado',
@@ -68,8 +68,10 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
 
     try {
       const fullPhone = `+504${phone}`;
-      
+
       await axiosInstance.post('/requests/out-of-stock', {
+        user_email: user?.email || 'invitado@ejemplo.com',
+        user_name: user?.name || 'Invitado',
         product_id: product.id,
         phone: fullPhone,
         quantity
@@ -124,22 +126,22 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
             <div className="aspect-square rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-700 dark:to-gray-600">
               {(() => {
                 const allImages = [];
-                if (product.image_url) allImages.push({ 
-                  url: product.image_url, 
+                if (product.image_url) allImages.push({
+                  url: product.image_url,
                   description: null,
                   transform: product.image_transform || { scale: 1, x: 50, y: 50 }
                 });
                 if (product.images && product.images.length > 0) allImages.push(...product.images);
-                
+
                 const currentImage = allImages[selectedImageIndex];
-                
+
                 if (currentImage) {
                   const transform = currentImage.transform || { scale: 1, x: 50, y: 50 };
                   return (
                     <div className="relative w-full h-full flex items-center justify-center">
-                      <img 
-                        src={currentImage.url} 
-                        alt={currentImage.description || product.name} 
+                      <img
+                        src={currentImage.url}
+                        alt={currentImage.description || product.name}
                         className="max-w-full max-h-full object-contain"
                         style={{
                           transform: `scale(${transform.scale})`,
@@ -169,7 +171,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
               const allImages = [];
               if (product.image_url) allImages.push({ url: product.image_url, description: null });
               if (product.images && product.images.length > 0) allImages.push(...product.images);
-              
+
               if (allImages.length > 1) {
                 return (
                   <div className="grid grid-cols-4 gap-3">
@@ -177,15 +179,14 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                       <button
                         key={index}
                         onClick={() => setSelectedImageIndex(index)}
-                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                          selectedImageIndex === index 
-                            ? 'border-sky-500 dark:border-sky-400 shadow-lg' 
+                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
+                            ? 'border-sky-500 dark:border-sky-400 shadow-lg'
                             : 'border-gray-200 dark:border-gray-700 hover:border-sky-300 dark:hover:border-sky-600'
-                        }`}
+                          }`}
                       >
-                        <img 
-                          src={img.url} 
-                          alt={`Vista ${index + 1}`} 
+                        <img
+                          src={img.url}
+                          alt={`Vista ${index + 1}`}
                           className="w-full h-full object-cover"
                         />
                       </button>
@@ -223,7 +224,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
             {product.stock > 0 && (
               <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 space-y-4" data-testid="purchase-form">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white">Solicitar Compra</h3>
-                
+
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Cantidad</label>
                   <div className="flex items-center gap-4">
@@ -252,7 +253,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Teléfono</label>
                   <div className="flex gap-2">
-                    <select 
+                    <select
                       disabled
                       className="w-28 px-3 py-3 text-base border-2 border-gray-200 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                       value="+504"
@@ -284,7 +285,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
             {product.stock === 0 && (
               <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 space-y-4" data-testid="outofstock-form">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white">Solicitar cuando haya stock</h3>
-                
+
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Cantidad deseada</label>
                   <div className="flex items-center gap-4">
@@ -311,7 +312,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Teléfono</label>
                   <div className="flex gap-2">
-                    <select 
+                    <select
                       disabled
                       className="w-28 px-3 py-3 text-base border-2 border-gray-200 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                       value="+504"

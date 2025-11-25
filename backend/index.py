@@ -401,23 +401,26 @@ async def create_purchase_request(data: dict, background_tasks: BackgroundTasks)
     )
     
     # Send email
+    user = (data["user_name"] or "Anónimo") + " " + (data["user_email"] or "Anónimo")
     background_tasks.add_task(
         send_email,
         destinatary=os.environ['EMAIL_DESTINATARY'],
         subject="Solicitud de compra",
-        message="""
+        message=f"""
         <h1>Nueva solicitud de compra</h1>
-        <p>Cliente: {data["user_name"] or "Anónimo"} ({data["user_email"] or "Anónimo"})</p>
-        <p>Producto: {data["product_name"]} x{data["quantity"]}</p>
-        <p>Total: Lps {data["total_price"]:.2f}</p>
-        <p>Teléfono: {data["user_phone"] or "Anónimo"}</p>
+        <p>Cliente: {user}</p>
+        <p>Producto: {purchase.product_name}</p>
+        <p>Cantidad: {purchase.quantity}</p>
+        <p>Total: Lps {purchase.total_price:.2f}</p>
+        <p>Teléfono: {purchase.user_phone}</p>
         """
     )
     
     # Mock notification
     logger.info(f"📧 MOCK EMAIL: Solicitud de compra #{purchase.id}")
-    logger.info(f"   Cliente: {purchase.user_name} ({purchase.user_email})")
-    logger.info(f"   Producto: {purchase.product_name} x{purchase.quantity}")
+    logger.info(f"   Cliente: {user}")
+    logger.info(f"   Producto: {purchase.product_name}")
+    logger.info(f"   Cantidad: {purchase.quantity}")
     logger.info(f"   Total: Lps {purchase.total_price:.2f}")
     logger.info(f"   Teléfono: {purchase.user_phone}")
     
@@ -478,7 +481,7 @@ async def validate_code(data: dict):
     return {"verified": True}
 
 @api_router.post("/requests/out-of-stock")
-async def create_out_of_stock_request(data: dict):
+async def create_out_of_stock_request(data: dict, background_tasks: BackgroundTasks):
     """Request out of stock product"""
     phone = data["phone"]
     
@@ -502,16 +505,17 @@ async def create_out_of_stock_request(data: dict):
     await db.out_of_stock_requests.insert_one(request_doc)
 
     # Send email
+    user = (data["user_name"] or "Anónimo") + " " + (data["user_email"] or "Anónimo")
     background_tasks.add_task(
         send_email,
         destinatary=os.environ['EMAIL_DESTINATARY'],
         subject="Solicitud de artículo sin stock",
-        message="""
+        message=f"""
         <h1>Nueva solicitud de artículo sin stock</h1>
-        <p>Cliente: {data["user_name"] or "Anónimo"} ({data["user_email"] or "Anónimo"})</p>
-        <p>Producto: {product["name"]}</p>
-        <p>Cantidad: {data["quantity"]}</p>
-        <p>Teléfono: {data["phone"] or "Anónimo"}</p>
+        <p>Cliente: {user}</p>
+        <p>Producto: {request_obj.product_name}</p>
+        <p>Cantidad: {request_obj.quantity}</p>
+        <p>Teléfono: {request_obj.phone}</p>
         """
     )
     
@@ -524,7 +528,7 @@ async def create_out_of_stock_request(data: dict):
     return request_obj
 
 @api_router.post("/requests/custom")
-async def create_custom_request(data: dict):
+async def create_custom_request(data: dict, background_tasks: BackgroundTasks):
     """Request custom/non-existent product"""
     phone = data["phone"]
     
@@ -542,16 +546,17 @@ async def create_custom_request(data: dict):
     await db.custom_requests.insert_one(request_doc)
 
     # Send email
+    user = (data["user_name"] or "Anónimo") + " " + (data["user_email"] or "Anónimo")
     background_tasks.add_task(
         send_email,
         destinatary=os.environ['EMAIL_DESTINATARY'],
         subject="Solicitud de artículo personalizado",
-        message="""
+        message=f"""
         <h1>Nueva solicitud de artículo personalizado</h1>
-        <p>Cliente: {data["user_name"] or "Anónimo"} ({data["user_email"] or "Anónimo"})</p>
-        <p>Descripción: {data["description"]}</p>
-        <p>Cantidad: {data["quantity"]}</p>
-        <p>Teléfono: {data["phone"] or "Anónimo"}</p>
+        <p>Cliente: {user}</p>
+        <p>Descripción: {request_obj.description}</p>
+        <p>Cantidad: {request_obj.quantity}</p>
+        <p>Teléfono: {request_obj.phone}</p>
         """
     )
     
