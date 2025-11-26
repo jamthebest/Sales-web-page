@@ -7,6 +7,7 @@ import { Package, ArrowLeft, Minus, Plus, Edit, Video } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import SuccessModal from '@/components/SuccessModal';
+import ImageModal from '@/components/ImageModal';
 
 const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   const { id } = useParams();
@@ -18,6 +19,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchProduct();
@@ -96,6 +98,40 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
     );
   }
 
+  const getFullUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('data:') || url.startsWith('http')) return url;
+    const backendUrl = axiosInstance.defaults.baseURL.replace('/api', '');
+    return `${backendUrl}${url}`;
+  };
+
+  const getAllImages = () => {
+    if (!product) return [];
+    const images = [];
+    if (product.image_url) {
+      images.push({
+        url: product.image_url,
+        description: null,
+        transform: product.image_transform || { scale: 1, x: 50, y: 50 }
+      });
+    }
+    if (product.images && product.images.length > 0) {
+      images.push(...product.images);
+    }
+    return images;
+  };
+
+  const allImages = getAllImages();
+  const currentImage = allImages[selectedImageIndex];
+
+  const handleNextImage = () => {
+    setSelectedImageIndex((prev) => (prev + 1) % allImages.length);
+  };
+
+  const handlePrevImage = () => {
+    setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Navbar user={user} logout={logout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
@@ -127,106 +163,72 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
           <div className="space-y-4">
             {/* Main Image */}
             <div className="aspect-square rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-700 dark:to-gray-600">
-              {(() => {
-                const allImages = [];
-                if (product.image_url) allImages.push({
-                  url: product.image_url,
-                  description: null,
-                  transform: product.image_transform || { scale: 1, x: 50, y: 50 }
-                });
-                if (product.images && product.images.length > 0) allImages.push(...product.images);
-
-                const currentImage = allImages[selectedImageIndex];
-
-                if (currentImage) {
-                  const transform = currentImage.transform || { scale: 1, x: 50, y: 50 };
-
-                  // Helper to get full URL
-                  const getFullUrl = (url) => {
-                    if (url.startsWith('data:') || url.startsWith('http')) return url;
-                    // Remove /api from baseURL to get root backend URL
-                    const backendUrl = axiosInstance.defaults.baseURL.replace('/api', '');
-                    return `${backendUrl}${url}`;
-                  };
-
-                  return (
-                    <div className="relative w-full h-full flex items-center justify-center bg-black">
-                      {currentImage.type === 'video' ? (
-                        <video
-                          src={getFullUrl(currentImage.url)}
-                          controls
-                          autoPlay
-                          className="max-w-full max-h-full"
-                          style={{
-                            transform: `scale(${transform.scale})`,
-                            transformOrigin: `${transform.x}% ${transform.y}%`
-                          }}
-                        />
-                      ) : (
-                        <img
-                          src={getFullUrl(currentImage.url)}
-                          alt={currentImage.description || product.name}
-                          className="max-w-full max-h-full object-contain"
-                          style={{
-                            transform: `scale(${transform.scale})`,
-                            transformOrigin: `${transform.x}% ${transform.y}%`
-                          }}
-                          data-testid="product-image"
-                        />
-                      )}
-                      {currentImage.description && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white p-4">
-                          <p className="text-sm">{currentImage.description}</p>
-                        </div>
-                      )}
+              {currentImage ? (
+                <div className="relative w-full h-full flex items-center justify-center bg-black">
+                  {currentImage.type === 'video' ? (
+                    <video
+                      src={getFullUrl(currentImage.url)}
+                      controls
+                      autoPlay
+                      className="max-w-full max-h-full"
+                      style={{
+                        transform: `scale(${currentImage.transform?.scale || 1})`,
+                        transformOrigin: `${currentImage.transform?.x || 50}% ${currentImage.transform?.y || 50}%`
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={getFullUrl(currentImage.url)}
+                      alt={currentImage.description || product.name}
+                      className="max-w-full max-h-full object-contain cursor-zoom-in hover:opacity-95 transition-opacity"
+                      style={{
+                        transform: `scale(${currentImage.transform?.scale || 1})`,
+                        transformOrigin: `${currentImage.transform?.x || 50}% ${currentImage.transform?.y || 50}%`
+                      }}
+                      onClick={() => setIsModalOpen(true)}
+                      data-testid="product-image"
+                    />
+                  )}
+                  {currentImage.description && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white p-4">
+                      <p className="text-sm">{currentImage.description}</p>
                     </div>
-                  );
-                } else {
-                  return (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Package className="w-32 h-32 text-sky-300 dark:text-sky-600" />
-                    </div>
-                  );
-                }
-              })()}
+                  )}
+                </div>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Package className="w-32 h-32 text-sky-300 dark:text-sky-600" />
+                </div>
+              )}
             </div>
 
             {/* Thumbnail Gallery */}
-            {(() => {
-              const allImages = [];
-              if (product.image_url) allImages.push({ url: product.image_url, description: null });
-              if (product.images && product.images.length > 0) allImages.push(...product.images);
-
-              if (allImages.length > 1) {
-                return (
-                  <div className="grid grid-cols-4 gap-3">
-                    {allImages.map((img, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedImageIndex(index)}
-                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
-                          ? 'border-sky-500 dark:border-sky-400 shadow-lg'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-sky-300 dark:hover:border-sky-600'
-                          }`}
-                      >
-                        {img.type === 'video' ? (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-900">
-                            <Video className="w-8 h-8 text-white" />
-                          </div>
-                        ) : (
-                          <img
-                            src={img.url.startsWith('/') ? `${axiosInstance.defaults.baseURL.replace('/api', '')}${img.url}` : img.url}
-                            alt={`Vista ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                );
-              }
-              return null;
-            })()}
+            {allImages.length > 1 && (
+              <div className="grid grid-cols-4 gap-3">
+                {allImages.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImageIndex(index)}
+                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
+                      ? 'border-sky-500 dark:border-sky-400 shadow-lg'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-sky-300 dark:hover:border-sky-600'
+                      }`}
+                  >
+                    {img.type === 'video' ? (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-900">
+                        <Video className="w-8 h-8 text-white" />
+                      </div>
+                    ) : (
+                      <img
+                        src={getFullUrl(img.url)}
+                        alt={`Vista ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Product Info */}
@@ -380,6 +382,18 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
         onClose={() => setShowSuccessModal(false)}
         message={successMessage}
       />
+
+      {currentImage && currentImage.type !== 'video' && (
+        <ImageModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          imageUrl={getFullUrl(currentImage.url)}
+          alt={currentImage.description || product.name}
+          onNext={handleNextImage}
+          onPrev={handlePrevImage}
+          showNavigation={allImages.length > 1}
+        />
+      )}
     </div>
   );
 };
