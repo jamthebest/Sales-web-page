@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../App';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Package, ArrowLeft, Minus, Plus, Edit } from 'lucide-react';
+import { Package, ArrowLeft, Minus, Plus, Edit, Video } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import SuccessModal from '@/components/SuccessModal';
@@ -140,18 +140,40 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
 
                 if (currentImage) {
                   const transform = currentImage.transform || { scale: 1, x: 50, y: 50 };
+
+                  // Helper to get full URL
+                  const getFullUrl = (url) => {
+                    if (url.startsWith('data:') || url.startsWith('http')) return url;
+                    // Remove /api from baseURL to get root backend URL
+                    const backendUrl = axiosInstance.defaults.baseURL.replace('/api', '');
+                    return `${backendUrl}${url}`;
+                  };
+
                   return (
-                    <div className="relative w-full h-full flex items-center justify-center">
-                      <img
-                        src={currentImage.url}
-                        alt={currentImage.description || product.name}
-                        className="max-w-full max-h-full object-contain"
-                        style={{
-                          transform: `scale(${transform.scale})`,
-                          transformOrigin: `${transform.x}% ${transform.y}%`
-                        }}
-                        data-testid="product-image"
-                      />
+                    <div className="relative w-full h-full flex items-center justify-center bg-black">
+                      {currentImage.type === 'video' ? (
+                        <video
+                          src={getFullUrl(currentImage.url)}
+                          controls
+                          autoPlay
+                          className="max-w-full max-h-full"
+                          style={{
+                            transform: `scale(${transform.scale})`,
+                            transformOrigin: `${transform.x}% ${transform.y}%`
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src={getFullUrl(currentImage.url)}
+                          alt={currentImage.description || product.name}
+                          className="max-w-full max-h-full object-contain"
+                          style={{
+                            transform: `scale(${transform.scale})`,
+                            transformOrigin: `${transform.x}% ${transform.y}%`
+                          }}
+                          data-testid="product-image"
+                        />
+                      )}
                       {currentImage.description && (
                         <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white p-4">
                           <p className="text-sm">{currentImage.description}</p>
@@ -187,11 +209,17 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                           : 'border-gray-200 dark:border-gray-700 hover:border-sky-300 dark:hover:border-sky-600'
                           }`}
                       >
-                        <img
-                          src={img.url}
-                          alt={`Vista ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
+                        {img.type === 'video' ? (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-900">
+                            <Video className="w-8 h-8 text-white" />
+                          </div>
+                        ) : (
+                          <img
+                            src={img.url.startsWith('/') ? `${axiosInstance.defaults.baseURL.replace('/api', '')}${img.url}` : img.url}
+                            alt={`Vista ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
                       </button>
                     ))}
                   </div>

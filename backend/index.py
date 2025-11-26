@@ -1,5 +1,6 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request, BackgroundTasks
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request, BackgroundTasks, UploadFile, File
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -24,6 +25,13 @@ db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
 app = FastAPI()
+
+# Ensure uploads directory exists
+UPLOAD_DIR = ROOT_DIR / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+# Mount static files
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
@@ -54,6 +62,7 @@ class ImageTransform(BaseModel):
 class ProductImage(BaseModel):
     url: str
     description: Optional[str] = None
+    type: str = "image"  # "image" or "video"
     transform: Optional[ImageTransform] = ImageTransform()
 
 class Product(BaseModel):
@@ -297,6 +306,31 @@ async def logout(request: Request, response: Response):
     
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Sesión cerrada"}
+
+@api_router.post("/upload")
+async def upload_file(request: Request, file: UploadFile = File(...)):
+    """Upload file (admin only)"""
+    await require_admin(request)
+    
+    try:
+        # Generate unique filename
+        file_ext = os.path.splitext(file.filename)[1]
+        filename = f"{uuid.uuid4()}{file_ext}"
+        file_path = UPLOAD_DIR / filename
+        
+        # Save file
+        with open(file_path, "wb") as f:
+            content = await file.read()
+            f.write(content)
+            
+        # Return URL
+        # Assuming server runs on same host/port, we construct relative URL
+        # In production this might be a full URL or CDN URL
+        return {"url": f"/uploads/{filename}", "type": file.content_type}
+        
+    except Exception as e:
+        logger.error(f"Error uploading file: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error al subir archivo")
 
 # ==================== PRODUCT ROUTES ====================
 

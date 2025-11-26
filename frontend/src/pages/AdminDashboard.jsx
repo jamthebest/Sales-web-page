@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, Plus, Edit, Trash2, Mail, Phone, ShoppingCart, AlertCircle, FileText, TrendingUp, Inbox, Upload, X, ZoomIn, ZoomOut, RotateCcw, Check, CheckCircle2 } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, Mail, Phone, ShoppingCart, AlertCircle, FileText, TrendingUp, Inbox, Upload, X, ZoomIn, ZoomOut, RotateCcw, Check, CheckCircle2, Video } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 
@@ -186,10 +186,42 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
         setGalleryImages(prev => [...prev, {
           url: reader.result,
           description: '',
+          type: 'image',
           transform: { scale: 1, x: 50, y: 50 }
         }]);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 50 * 1024 * 1024) {
+        toast.error('El video debe ser menor a 50MB');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await axiosInstance.post('/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        setGalleryImages(prev => [...prev, {
+          url: response.data.url,
+          description: '',
+          type: 'video',
+          transform: { scale: 1, x: 50, y: 50 }
+        }]);
+        toast.success('Video subido exitosamente');
+      } catch (error) {
+        toast.error('Error al subir video');
+      }
     }
   };
 
@@ -198,6 +230,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       setGalleryImages(prev => [...prev, {
         url: url.trim(),
         description: '',
+        type: 'image',
         transform: { scale: 1, x: 50, y: 50 }
       }]);
     }
@@ -1119,6 +1152,24 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                   </label>
                 </div>
 
+                <div>
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleVideoUpload}
+                    className="hidden"
+                    id="gallery-video-upload"
+                  />
+                  <label htmlFor="gallery-video-upload">
+                    <Button type="button" variant="outline" className="w-full" asChild>
+                      <span className="cursor-pointer">
+                        <Video className="w-4 h-4 mr-2" />
+                        Subir Video a Galería
+                      </span>
+                    </Button>
+                  </label>
+                </div>
+
                 {/* Display gallery images */}
                 {galleryImages.length > 0 && (
                   <div className="grid grid-cols-2 gap-3 mt-4">
@@ -1126,15 +1177,21 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                       <div key={index} className="relative border-2 border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden group">
                         {/* Image Preview with Transform */}
                         <div className="w-full h-32 bg-gray-100 dark:bg-gray-700 overflow-hidden relative flex items-center justify-center">
-                          <img
-                            src={img.url}
-                            alt={`Galería ${index + 1}`}
-                            className="max-w-full max-h-full object-contain"
-                            style={{
-                              transform: `scale(${img.transform?.scale || 1})`,
-                              transformOrigin: `${img.transform?.x || 50}% ${img.transform?.y || 50}%`
-                            }}
-                          />
+                          {img.type === 'video' ? (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-900">
+                              <Video className="w-12 h-12 text-white" />
+                            </div>
+                          ) : (
+                            <img
+                              src={img.url}
+                              alt={`Galería ${index + 1}`}
+                              className="max-w-full max-h-full object-contain"
+                              style={{
+                                transform: `scale(${img.transform?.scale || 1})`,
+                                transformOrigin: `${img.transform?.x || 50}% ${img.transform?.y || 50}%`
+                              }}
+                            />
+                          )}
 
                           {/* Overlay buttons */}
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
