@@ -1,9 +1,0 @@
-{
-    "projects": {
-        "frontend": {
-            "src": "frontend",
-            "buildCommand": "yarn build",
-            "outputDirectory": "frontend/build"
-        }
-    }
-}
