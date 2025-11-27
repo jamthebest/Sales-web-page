@@ -204,6 +204,9 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
 
       const formData = new FormData();
       formData.append('file', file);
+      if (productForm.name) {
+        formData.append('product_name', productForm.name);
+      }
 
       try {
         const response = await axiosInstance.post('/upload', formData, {

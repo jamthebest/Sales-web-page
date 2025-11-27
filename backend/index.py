@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request, BackgroundTasks, UploadFile, File
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request, BackgroundTasks, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
@@ -315,6 +315,12 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
     await require_admin(request)
     
     try:
+        data = await request.form()
+        product_name = data.get("product_name")
+        if not product_name:
+            raise HTTPException(status_code=400, detail="Nombre del producto es requerido")
+        destination = f"{product_name}/{file.filename}"
+
         # Generate unique filename
         file_ext = os.path.splitext(file.filename)[1]
         filename = f"{uuid.uuid4()}{file_ext}"
@@ -349,7 +355,7 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
         credentials = service_account.Credentials.from_service_account_info(service_account_info)
         storage_client = storage.Client(credentials=credentials, project=project_id)
         bucket = storage_client.bucket(bucket_name)
-        blob = bucket.blob(filename)
+        blob = bucket.blob(destination)
         
         # Read and upload content
         content = await file.read()
