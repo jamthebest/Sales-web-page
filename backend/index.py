@@ -13,6 +13,8 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import random
 import httpx
+from google.cloud import storage
+from google.oauth2 import service_account
 from email_service import send_email
 
 ROOT_DIR = Path(__file__).parent
@@ -316,21 +318,53 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
         # Generate unique filename
         file_ext = os.path.splitext(file.filename)[1]
         filename = f"{uuid.uuid4()}{file_ext}"
-        file_path = UPLOAD_DIR / filename
         
-        # Save file
-        with open(file_path, "wb") as f:
-            content = await file.read()
-            f.write(content)
+        # GCS Configuration
+        bucket_name = os.environ.get('GCS_BUCKET_NAME')
+        project_id = os.environ.get('GOOGLE_PROJECT_ID')
+        private_key_id = os.environ.get('GOOGLE_PRIVATE_KEY_ID')
+        private_key = os.environ.get('GOOGLE_PRIVATE_KEY')
+        client_email = os.environ.get('GOOGLE_CLIENT_EMAIL')
+        client_id = os.environ.get('GOOGLE_CLIENT_ID')
+        client_x509_cert_url = os.environ.get('GOOGLE_CLIENT_X509_CERT_URL')
+
+        if not bucket_name or not project_id or not private_key or not client_email:
+             raise HTTPException(status_code=500, detail="Configuración de Google Cloud incompleta en variables de entorno")
+
+        # Construct credentials
+        service_account_info = {
+            "type": "service_account",
+            "project_id": project_id,
+            "private_key_id": private_key_id,
+            "private_key": private_key.replace('\\n', '\n'),
+            "client_email": client_email,
+            "client_id": client_id,
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "client_x509_cert_url": client_x509_cert_url
+        }
+
+        # Initialize GCS client
+        credentials = service_account.Credentials.from_service_account_info(service_account_info)
+        storage_client = storage.Client(credentials=credentials, project=project_id)
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob(filename)
+        
+        # Read and upload content
+        content = await file.read()
+        blob.upload_from_string(content, content_type=file.content_type)
+        
+        try:
+            blob.make_public()
+        except Exception:
+            pass
             
-        # Return URL
-        # Assuming server runs on same host/port, we construct relative URL
-        # In production this might be a full URL or CDN URL
-        return {"url": f"/uploads/{filename}", "type": file.content_type}
+        return {"url": blob.public_url, "type": file.content_type}
         
     except Exception as e:
-        logger.error(f"Error uploading file: {str(e)}")
-        raise HTTPException(status_code=500, detail="Error al subir archivo")
+        logger.error(f"Error uploading file to GCS: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error al subir archivo: {str(e)}")
 
 # ==================== PRODUCT ROUTES ====================
 
