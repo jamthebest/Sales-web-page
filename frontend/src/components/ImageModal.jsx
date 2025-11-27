@@ -1,7 +1,7 @@
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
-const ImageModal = ({ isOpen, onClose, imageUrl, alt, onNext, onPrev, showNavigation }) => {
+const ImageModal = ({ isOpen, onClose, imageUrl, alt, onNext, onPrev, showNavigation, type = 'image' }) => {
     const [scale, setScale] = useState(1);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const containerRef = useRef(null);
@@ -81,16 +81,41 @@ const ImageModal = ({ isOpen, onClose, imageUrl, alt, onNext, onPrev, showNaviga
                 onMouseMove={handleMouseMove}
                 onClick={(e) => e.stopPropagation()}
             >
-                <img
-                    src={imageUrl}
-                    alt={alt || 'Product full view'}
-                    className="max-w-full max-h-full object-contain transition-transform duration-200 ease-out"
-                    style={{
-                        transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
-                        cursor: scale > 1 ? 'zoom-out' : 'zoom-in'
-                    }}
-                    onClick={handleZoomToggle}
-                />
+                {type === 'video' ? (
+                    <video
+                        src={imageUrl}
+                        controls
+                        autoPlay
+                        className="max-w-full max-h-full object-contain transition-transform duration-200 ease-out"
+                        style={{
+                            transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
+                            cursor: scale > 1 ? 'zoom-out' : 'zoom-in'
+                        }}
+                        onClick={(e) => {
+                            // Prevent click from pausing/playing if we want zoom, 
+                            // but usually click on video toggles play/pause.
+                            // Let's decide: if we want zoom, we might interfere with controls.
+                            // For now, let's allow zoom on the video container area?
+                            // Actually, standard video players capture click. 
+                            // Maybe we shouldn't allow zoom on video? 
+                            // The user just said "visualize". 
+                            // But keeping it consistent is nice.
+                            // Let's try to keep zoom.
+                            handleZoomToggle(e);
+                        }}
+                    />
+                ) : (
+                    <img
+                        src={imageUrl}
+                        alt={alt || 'Product full view'}
+                        className="max-w-full max-h-full object-contain transition-transform duration-200 ease-out"
+                        style={{
+                            transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
+                            cursor: scale > 1 ? 'zoom-out' : 'zoom-in'
+                        }}
+                        onClick={handleZoomToggle}
+                    />
+                )}
             </div>
 
             {/* Hint text */}

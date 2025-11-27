@@ -170,10 +170,14 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                       src={getFullUrl(currentImage.url)}
                       controls
                       autoPlay
-                      className="max-w-full max-h-full"
+                      className="max-w-full max-h-full cursor-pointer"
                       style={{
                         transform: `scale(${currentImage.transform?.scale || 1})`,
                         transformOrigin: `${currentImage.transform?.x || 50}% ${currentImage.transform?.y || 50}%`
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsModalOpen(true);
                       }}
                     />
                   ) : (
@@ -383,7 +387,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
         message={successMessage}
       />
 
-      {currentImage && currentImage.type !== 'video' && (
+      {currentImage && (
         <ImageModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -392,6 +396,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
           onNext={handleNextImage}
           onPrev={handlePrevImage}
           showNavigation={allImages.length > 1}
+          type={currentImage.type}
         />
       )}
     </div>
