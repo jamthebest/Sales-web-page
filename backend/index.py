@@ -439,7 +439,7 @@ async def create_purchase_request(data: dict, background_tasks: BackgroundTasks)
     background_tasks.add_task(
         send_email,
         destinatary=os.environ['EMAIL_DESTINATARY'],
-        subject="Solicitud de compra",
+        subject=f"Solicitud de compra #{purchase.id}",
         message=f"""
         <h1>Nueva solicitud de compra</h1>
         <p>Cliente: {user}</p>
@@ -543,7 +543,7 @@ async def create_out_of_stock_request(data: dict, background_tasks: BackgroundTa
     background_tasks.add_task(
         send_email,
         destinatary=os.environ['EMAIL_DESTINATARY'],
-        subject="Solicitud de artículo sin stock",
+        subject=f"Solicitud de artículo sin stock #{request_obj.id}",
         message=f"""
         <h1>Nueva solicitud de artículo sin stock</h1>
         <p>Cliente: {user}</p>
@@ -584,7 +584,7 @@ async def create_custom_request(data: dict, background_tasks: BackgroundTasks):
     background_tasks.add_task(
         send_email,
         destinatary=os.environ['EMAIL_DESTINATARY'],
-        subject="Solicitud de artículo personalizado",
+        subject=f"Solicitud de artículo personalizado #{request_obj.id}",
         message=f"""
         <h1>Nueva solicitud de artículo personalizado</h1>
         <p>Cliente: {user}</p>
