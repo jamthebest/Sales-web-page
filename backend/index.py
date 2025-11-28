@@ -168,15 +168,15 @@ async def get_current_user(request: Request) -> Optional[User]:
     if not session_token:
         return None
     
-    session = await db.user_sessions.find_one({"session_token": session_token})
+    session = await db.get_collection("user_sessions").find_one({"session_token": session_token})
     if not session:
         return None
     
     if datetime.fromisoformat(session["expires_at"]) < datetime.now(timezone.utc):
-        await db.user_sessions.delete_one({"session_token": session_token})
+        await db.get_collection("user_sessions").delete_one({"session_token": session_token})
         return None
     
-    user_doc = await db.users.find_one({"id": session["user_id"]}, {"_id": 0})
+    user_doc = await db.get_collection("users").find_one({"id": session["user_id"]}, {"_id": 0})
     if not user_doc:
         return None
     
@@ -205,13 +205,13 @@ async def set_admin_user(user_id: str, request: Request) -> Optional[User]:
     """Set admin user from id"""
     await require_admin(request)
     
-    existing = await db.users.find_one({"id": user_id})
+    existing = await db.get_collection("users").find_one({"id": user_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     
-    await db.users.update_one({"id": user_id}, {"$set": { "role": "admin" }})
+    await db.get_collection("users").update_one({"id": user_id}, {"$set": { "role": "admin" }})
     
-    updated_user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    updated_user = await db.get_collection("users").find_one({"id": user_id}, {"_id": 0})
     if isinstance(updated_user.get('created_at'), str):
         updated_user['created_at'] = datetime.fromisoformat(updated_user['created_at'])
     
@@ -240,7 +240,7 @@ async def create_session(request: Request, response: Response):
             raise HTTPException(status_code=401, detail=f"Error al validar sesión: {str(e)}")
     
     # Check if user exists
-    existing_user = await db.users.find_one({"email": data["email"]}, {"_id": 0})
+    existing_user = await db.get_collection("users").find_one({"email": data["email"]}, {"_id": 0})
     
     if not existing_user:
         # Create new user
@@ -253,7 +253,7 @@ async def create_session(request: Request, response: Response):
         )
         user_doc = user.model_dump()
         user_doc['created_at'] = user_doc['created_at'].isoformat()
-        await db.users.insert_one(user_doc)
+        await db.get_collection("users").insert_one(user_doc)
     else:
         if isinstance(existing_user.get('created_at'), str):
             existing_user['created_at'] = datetime.fromisoformat(existing_user['created_at'])
@@ -273,7 +273,7 @@ async def create_session(request: Request, response: Response):
     session_doc['expires_at'] = session_doc['expires_at'].isoformat()
     session_doc['created_at'] = session_doc['created_at'].isoformat()
     
-    await db.user_sessions.insert_one(session_doc)
+    await db.get_collection("user_sessions").insert_one(session_doc)
     
     # Set cookie
     response.set_cookie(
@@ -304,7 +304,7 @@ async def logout(request: Request, response: Response):
     """Logout user"""
     session_token = request.cookies.get("session_token")
     if session_token:
-        await db.user_sessions.delete_one({"session_token": session_token})
+        await db.get_collection("user_sessions").delete_one({"session_token": session_token})
     
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Sesión cerrada"}
@@ -377,7 +377,7 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
 @api_router.get("/products", response_model=List[Product])
 async def get_products():
     """Get all products"""
-    products = await db.products.find({}, {"_id": 0}).to_list(1000)
+    products = await db.get_collection("products").find({}, {"_id": 0}).to_list(1000)
     
     for product in products:
         if isinstance(product.get('created_at'), str):
@@ -388,7 +388,7 @@ async def get_products():
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
     """Get product by ID"""
-    product = await db.products.find_one({"id": product_id}, {"_id": 0})
+    product = await db.get_collection("products").find_one({"id": product_id}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
@@ -406,7 +406,7 @@ async def create_product(product_data: ProductCreate, request: Request):
     product_doc = product.model_dump()
     product_doc['created_at'] = product_doc['created_at'].isoformat()
     
-    await db.products.insert_one(product_doc)
+    await db.get_collection("products").insert_one(product_doc)
     return product
 
 @api_router.put("/products/{product_id}", response_model=Product)
@@ -414,15 +414,15 @@ async def update_product(product_id: str, product_data: ProductUpdate, request: 
     """Update product (admin only)"""
     await require_admin(request)
     
-    existing = await db.products.find_one({"id": product_id})
+    existing = await db.get_collection("products").find_one({"id": product_id})
     if not existing:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
     update_data = {k: v for k, v in product_data.model_dump().items() if v is not None}
     if update_data:
-        await db.products.update_one({"id": product_id}, {"$set": update_data})
+        await db.get_collection("products").update_one({"id": product_id}, {"$set": update_data})
     
-    updated_product = await db.products.find_one({"id": product_id}, {"_id": 0})
+    updated_product = await db.get_collection("products").find_one({"id": product_id}, {"_id": 0})
     if isinstance(updated_product.get('created_at'), str):
         updated_product['created_at'] = datetime.fromisoformat(updated_product['created_at'])
     
@@ -433,7 +433,7 @@ async def delete_product(product_id: str, request: Request):
     """Delete product (admin only)"""
     await require_admin(request)
     
-    result = await db.products.delete_one({"id": product_id})
+    result = await db.get_collection("products").delete_one({"id": product_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
@@ -445,7 +445,7 @@ async def delete_product(product_id: str, request: Request):
 async def create_purchase_request(data: dict, background_tasks: BackgroundTasks):
     """Create purchase request"""
     # Get product
-    product = await db.products.find_one({"id": data["product_id"]}, {"_id": 0})
+    product = await db.get_collection("products").find_one({"id": data["product_id"]}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
@@ -466,10 +466,10 @@ async def create_purchase_request(data: dict, background_tasks: BackgroundTasks)
     purchase_doc = purchase.model_dump()
     purchase_doc['created_at'] = purchase_doc['created_at'].isoformat()
     
-    await db.purchase_requests.insert_one(purchase_doc)
+    await db.get_collection("purchase_requests").insert_one(purchase_doc)
     
     # Update stock
-    await db.products.update_one(
+    await db.get_collection("products").update_one(
         {"id": data["product_id"]},
         {"$inc": {"stock": -data["quantity"]}}
     )
@@ -506,7 +506,7 @@ async def verify_phone(data: dict):
     phone = data["phone"]
     
     # Check if phone is already verified
-    verified = await db.verified_phones.find_one({"phone": phone})
+    verified = await db.get_collection("verified_phones").find_one({"phone": phone})
     if verified:
         return {"already_verified": True, "message": "Teléfono ya verificado"}
     
@@ -514,7 +514,7 @@ async def verify_phone(data: dict):
     code = str(random.randint(100000, 999999))
     
     # Store pending verification
-    await db.pending_verifications.update_one(
+    await db.get_collection("pending_verifications").update_one(
         {"phone": phone},
         {"$set": {"code": code, "created_at": datetime.now(timezone.utc).isoformat()}},
         upsert=True
@@ -533,7 +533,7 @@ async def validate_code(data: dict):
     phone = data["phone"]
     code = data["code"]
     
-    pending = await db.pending_verifications.find_one({"phone": phone})
+    pending = await db.get_collection("pending_verifications").find_one({"phone": phone})
     if not pending or pending["code"] != code:
         raise HTTPException(status_code=400, detail="Código inválido")
     
@@ -543,14 +543,14 @@ async def validate_code(data: dict):
     verified_doc['verified_at'] = verified_doc['verified_at'].isoformat()
     verified_doc['last_used'] = verified_doc['last_used'].isoformat()
     
-    await db.verified_phones.update_one(
+    await db.get_collection("verified_phones").update_one(
         {"phone": phone},
         {"$set": verified_doc},
         upsert=True
     )
     
     # Delete pending
-    await db.pending_verifications.delete_one({"phone": phone})
+    await db.get_collection("pending_verifications").delete_one({"phone": phone})
     
     return {"verified": True}
 
@@ -560,7 +560,7 @@ async def create_out_of_stock_request(data: dict, background_tasks: BackgroundTa
     phone = data["phone"]
     
     # Get product
-    product = await db.products.find_one({"id": data["product_id"]}, {"_id": 0})
+    product = await db.get_collection("products").find_one({"id": data["product_id"]}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
@@ -576,7 +576,7 @@ async def create_out_of_stock_request(data: dict, background_tasks: BackgroundTa
     request_doc = request_obj.model_dump()
     request_doc['created_at'] = request_doc['created_at'].isoformat()
     
-    await db.out_of_stock_requests.insert_one(request_doc)
+    await db.get_collection("out_of_stock_requests").insert_one(request_doc)
 
     # Send email
     user = (data["user_name"] or "Anónimo") + " " + (data["user_email"] or "Anónimo")
@@ -617,7 +617,7 @@ async def create_custom_request(data: dict, background_tasks: BackgroundTasks):
     request_doc = request_obj.model_dump()
     request_doc['created_at'] = request_doc['created_at'].isoformat()
     
-    await db.custom_requests.insert_one(request_doc)
+    await db.get_collection("custom_requests").insert_one(request_doc)
 
     # Send email
     user = (data["user_name"] or "Anónimo") + " " + (data["user_email"] or "Anónimo")
@@ -647,9 +647,9 @@ async def get_all_requests(request: Request):
     """Get all requests (admin only)"""
     await require_admin(request)
     
-    purchase_requests = await db.purchase_requests.find({}, {"_id": 0}).to_list(1000)
-    out_of_stock_requests = await db.out_of_stock_requests.find({}, {"_id": 0}).to_list(1000)
-    custom_requests = await db.custom_requests.find({}, {"_id": 0}).to_list(1000)
+    purchase_requests = await db.get_collection("purchase_requests").find({}, {"_id": 0}).to_list(1000)
+    out_of_stock_requests = await db.get_collection("out_of_stock_requests").find({}, {"_id": 0}).to_list(1000)
+    custom_requests = await db.get_collection("custom_requests").find({}, {"_id": 0}).to_list(1000)
     
     for req in purchase_requests:
         if isinstance(req.get('created_at'), str):
@@ -674,7 +674,7 @@ async def complete_purchase_request(request_id: str, request: Request):
     """Mark a purchase request as completed"""
     await require_admin(request)
     
-    result = await db.purchase_requests.update_one(
+    result = await db.get_collection("purchase_requests").update_one(
         {"id": request_id},
         {"$set": {"status": "completed"}}
     )
@@ -690,7 +690,7 @@ async def reject_purchase_request(request_id: str, request: Request):
     await require_admin(request)
     
     # Get the request first to know the quantity and product
-    purchase_request = await db.purchase_requests.find_one({"id": request_id})
+    purchase_request = await db.get_collection("purchase_requests").find_one({"id": request_id})
     if not purchase_request:
         raise HTTPException(status_code=404, detail="Solicitud no encontrada")
         
@@ -698,13 +698,13 @@ async def reject_purchase_request(request_id: str, request: Request):
         raise HTTPException(status_code=400, detail="La solicitud ya ha sido procesada")
     
     # Update request status
-    await db.purchase_requests.update_one(
+    await db.get_collection("purchase_requests").update_one(
         {"id": request_id},
         {"$set": {"status": "rejected"}}
     )
     
     # Restitute stock
-    await db.products.update_one(
+    await db.get_collection("products").update_one(
         {"id": purchase_request["product_id"]},
         {"$inc": {"stock": purchase_request["quantity"]}}
     )
@@ -716,7 +716,7 @@ async def complete_out_of_stock_request(request_id: str, request: Request):
     """Mark an out-of-stock request as completed"""
     await require_admin(request)
     
-    result = await db.out_of_stock_requests.update_one(
+    result = await db.get_collection("out_of_stock_requests").update_one(
         {"id": request_id},
         {"$set": {"status": "completed"}}
     )
@@ -731,7 +731,7 @@ async def complete_custom_request(request_id: str, request: Request):
     """Mark a custom request as completed"""
     await require_admin(request)
     
-    result = await db.custom_requests.update_one(
+    result = await db.get_collection("custom_requests").update_one(
         {"id": request_id},
         {"$set": {"status": "completed"}}
     )
@@ -748,7 +748,7 @@ async def get_config(request: Request):
     """Get admin config"""
     await require_admin(request)
     
-    config = await db.admin_config.find_one({}, {"_id": 0})
+    config = await db.get_collection("admin_config").find_one({}, {"_id": 0})
     if not config:
         # Return default
         return {"email": "", "phone": ""}
@@ -759,7 +759,7 @@ async def update_config(config_data: AdminConfig, request: Request):
     """Update admin config"""
     await require_admin(request)
     
-    await db.admin_config.update_one(
+    await db.get_collection("admin_config").update_one(
         {},
         {"$set": config_data.model_dump()},
         upsert=True
