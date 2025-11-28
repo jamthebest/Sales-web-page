@@ -109,46 +109,46 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
     };
   }, [hasMore, loading]);
 
-  // Sticky header logic - detect when header is stuck
-  useEffect(() => {
-    const sentinel = headerSentinelRef.current;
-    if (!sentinel) return;
+  // // Sticky header logic - detect when header is stuck
+  // useEffect(() => {
+  //   const sentinel = headerSentinelRef.current;
+  //   if (!sentinel) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // When sentinel is not visible, header is stuck
-        setIsHeaderStuck(!entry.isIntersecting);
-      },
-      { threshold: 0, rootMargin: '-65px 0px 0px 0px' } // 64px navbar + 1px
-    );
+  //   const observer = new IntersectionObserver(
+  //     ([entry]) => {
+  //       // When sentinel is not visible, header is stuck
+  //       setIsHeaderStuck(!entry.isIntersecting);
+  //     },
+  //     { threshold: 0, rootMargin: '-65px 0px 0px 0px' } // 64px navbar + 1px
+  //   );
 
-    observer.observe(sentinel);
+  //   observer.observe(sentinel);
 
-    return () => {
-      if (sentinel) {
-        observer.unobserve(sentinel);
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (sentinel) {
+  //       observer.unobserve(sentinel);
+  //     }
+  //   };
+  // }, []);
 
-  // Logic for bottom banner
-  useEffect(() => {
-    const handleScroll = () => {
-      if (stickyHeaderRef.current && bottomBannerRef.current) {
-        const bannerRect = bottomBannerRef.current.getBoundingClientRect();
-        const headerHeight = stickyHeaderRef.current.offsetHeight;
+  // // Logic for bottom banner
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     if (stickyHeaderRef.current && bottomBannerRef.current) {
+  //       const bannerRect = bottomBannerRef.current.getBoundingClientRect();
+  //       const headerHeight = stickyHeaderRef.current.offsetHeight;
 
-        if (bannerRect.top <= headerHeight + 64) { // 64px is navbar height
-          stickyHeaderRef.current.style.position = 'relative';
-        } else {
-          stickyHeaderRef.current.style.position = 'sticky';
-        }
-      }
-    };
+  //       if (bannerRect.top <= headerHeight + 64) { // 64px is navbar height
+  //         stickyHeaderRef.current.style.position = 'relative';
+  //       } else {
+  //         stickyHeaderRef.current.style.position = 'sticky';
+  //       }
+  //     }
+  //   };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => window.removeEventListener('scroll', handleScroll);
+  // }, []);
 
   const fetchProducts = async () => {
     try {
@@ -280,10 +280,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
         {/* Sticky Products Header */}
         <div
           ref={stickyHeaderRef}
-          className={`sticky top-16 z-40 py-6 mb-6 transition-all duration-300 ${isHeaderStuck
-            ? 'backdrop-blur-md bg-gradient-to-br from-sky-50/90 via-white/90 to-emerald-50/90 dark:from-gray-900/90 dark:via-gray-800/90 dark:to-gray-900/90 border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm'
-            : 'bg-transparent'
-            }`}
+          className={`top-16 z-40 py-6 mb-6 transition-all duration-300 bg-transparent`}
         >
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
             {/* Title */}
@@ -430,7 +427,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
           <Button
             onClick={() => setShowCustomModal(true)}
             size="lg"
-            className="bg-white text-purple-600 hover:bg-gray-100 text-lg px-8 py-6 rounded-full shadow-lg"
+            className="bg-white text-purple-600 hover:bg-gray-100 text-sm sm:text-lg px-8 py-6 rounded-full shadow-lg"
             data-testid="custom-request-bottom-btn"
           >
             Solicitar Artículo Personalizado
