@@ -20,7 +20,7 @@ const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
 
   useEffect(() => {
     if (searchTerm) {
-      const filtered = products.filter(p => 
+      const filtered = products.filter(p =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (p.category && p.category.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -87,9 +87,9 @@ const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
               >
                 <div className="aspect-square bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-gray-700 dark:to-gray-600 relative overflow-hidden">
                   {product.image_url ? (
-                    <img 
-                      src={product.image_url} 
-                      alt={product.name} 
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
