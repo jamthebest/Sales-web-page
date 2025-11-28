@@ -16,13 +16,14 @@ import httpx
 from google.cloud import storage
 from google.oauth2 import service_account
 from email_service import send_email
+from pymongo.server_api import ServerApi
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url, tls=True)
+client = AsyncIOMotorClient(mongo_url, tls=True, server_api=ServerApi('1'))
 db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
