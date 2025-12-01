@@ -23,7 +23,8 @@ load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url, tls=True, server_api=ServerApi('1'))
+# Tls will be true, if the environment is production
+client = AsyncIOMotorClient(mongo_url, tls=os.environ.get('ENVIRONMENT') == 'production', server_api=ServerApi('1'))
 db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
