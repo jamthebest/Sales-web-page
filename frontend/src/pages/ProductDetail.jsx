@@ -302,7 +302,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                       placeholder="1234 5678"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                      className="flex-1 text-base py-6"
+                      className="flex-1 text-base py-6 dark:bg-gray-700"
                       data-testid="phone-input"
                     />
                   </div>
@@ -361,7 +361,7 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
                       placeholder="1234 5678"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                      className="flex-1 text-base py-6"
+                      className="flex-1 text-base py-6 dark:bg-gray-700"
                       data-testid="outofstock-phone-input"
                     />
                   </div>

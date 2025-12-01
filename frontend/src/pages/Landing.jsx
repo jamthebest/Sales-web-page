@@ -373,7 +373,7 @@ const Landing = ({ user, logout, darkMode, toggleDarkMode }) => {
                           Agotado
                         </div>
                       )}
-                      {product.stock > 0 && product.stock < 10 && (
+                      {product.stock > 0 && product.stock < 5 && (
                         <div className="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
                           Últimas {product.stock} unidades
                         </div>
