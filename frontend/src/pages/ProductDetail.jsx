@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import SuccessModal from '@/components/SuccessModal';
 import ImageModal from '@/components/ImageModal';
+import ReactMarkdown from 'react-markdown';
 
 const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
   const { id } = useParams();
@@ -245,9 +246,9 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 dark:text-white" data-testid="product-detail-name">
               {product.name}
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-400" data-testid="product-detail-description">
-              {product.description}
-            </p>
+            <div className="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-400" data-testid="product-detail-description">
+              <ReactMarkdown>{product.description}</ReactMarkdown>
+            </div>
             <div className="flex items-baseline gap-4">
               <span className="text-5xl font-bold text-sky-600 dark:text-sky-400" data-testid="product-detail-price">
                 Lps {product.price.toFixed(2)}
