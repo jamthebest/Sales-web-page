@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, Plus, Edit, Trash2, Mail, Phone, ShoppingCart, AlertCircle, FileText, TrendingUp, Inbox, Upload, X, ZoomIn, ZoomOut, RotateCcw, Check, CheckCircle2, Video } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Package, Plus, Edit, Trash2, Mail, Phone, ShoppingCart, AlertCircle, FileText, TrendingUp, Inbox, Upload, X, ZoomIn, ZoomOut, RotateCcw, Check, CheckCircle2, Video, Eye, EyeOff, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 
@@ -25,7 +26,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
     stock: '',
     image_url: '',
     category: '',
-    images: []
+    images: [],
+    is_visible: false
   });
   const [imagePreview, setImagePreview] = useState('');
   const [imageFile, setImageFile] = useState(null);
@@ -48,7 +50,7 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axiosInstance.get('/products');
+      const response = await axiosInstance.get('/products', { params: { include_hidden: true } });
       setProducts(response.data);
     } catch (error) {
       toast.error('Error al cargar productos');
@@ -122,7 +124,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       stock: '',
       image_url: '',
       category: '',
-      images: []
+      images: [],
+      is_visible: false
     });
     setImagePreview('');
     setImageFile(null);
@@ -140,7 +143,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
       stock: product.stock.toString(),
       image_url: product.image_url || '',
       category: product.category || '',
-      images: product.images || []
+      images: product.images || [],
+      is_visible: product.is_visible !== undefined ? product.is_visible : true
     });
     setImagePreview(product.image_url || '');
     setImageFile(null);
@@ -301,7 +305,8 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
         image_url: imageUrl || null,
         image_transform: imageUrl ? mainImageTransform : null,
         images: galleryImages.length > 0 ? galleryImages : [],
-        category: productForm.category || null
+        category: productForm.category || null,
+        is_visible: productForm.is_visible
       };
 
       if (editingProduct) {
@@ -428,10 +433,16 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                 <Card key={product.id} className="overflow-hidden" data-testid={`admin-product-card-${product.id}`}>
                   <div className="aspect-square bg-gradient-to-br from-sky-100 to-emerald-100 relative">
                     {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                      <img src={product.image_url} alt={product.name} className={`w-full h-full object-cover ${!product.is_visible ? 'opacity-50' : ''}`} />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <Package className="w-16 h-16 text-sky-300" />
+                      </div>
+                    )}
+                    {!product.is_visible && (
+                      <div className="absolute top-2 right-2 bg-gray-900/80 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                        <EyeOff className="w-3 h-3" />
+                        Oculto
                       </div>
                     )}
                   </div>
@@ -446,6 +457,15 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                     </div>
                     <div className="flex gap-2">
                       <Button
+                        onClick={() => window.open(`/products/${product.id}`, '_blank')}
+                        variant="outline"
+                        size="icon"
+                        title="Previsualizar"
+                        className="flex-shrink-0"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Button>
+                      <Button
                         onClick={() => handleEditProduct(product)}
                         variant="outline"
                         className="flex-1"
@@ -457,11 +477,11 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
                       <Button
                         onClick={() => handleDeleteProduct(product)}
                         variant="outline"
-                        className="flex-1 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20"
+                        size="icon"
+                        className="flex-shrink-0 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20"
                         data-testid={`delete-product-btn-${product.id}`}
                       >
-                        <Trash2 className="w-4 h-4 mr-1" />
-                        Eliminar
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </CardContent>
@@ -961,6 +981,24 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
             <DialogTitle className="dark:text-white">{editingProduct ? 'Editar Producto' : 'Nuevo Producto'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600">
+              <div className="space-y-0.5">
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                  {productForm.is_visible ? <Eye className="w-4 h-4 text-emerald-600" /> : <EyeOff className="w-4 h-4 text-gray-500" />}
+                  Visibilidad del Producto
+                </label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {productForm.is_visible
+                    ? 'El producto es visible para todos los clientes'
+                    : 'El producto está oculto y solo visible para administradores'}
+                </p>
+              </div>
+              <Switch
+                checked={productForm.is_visible}
+                onCheckedChange={(checked) => setProductForm({ ...productForm, is_visible: checked })}
+              />
+            </div>
+
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Nombre *</label>
               <Input

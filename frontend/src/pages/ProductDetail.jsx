@@ -31,8 +31,13 @@ const ProductDetail = ({ user, logout, darkMode, toggleDarkMode }) => {
       const response = await axiosInstance.get(`/products/${id}`);
       setProduct(response.data);
     } catch (error) {
-      toast.error('Error al cargar producto');
-      navigate('/products');
+      if (error.response?.status === 404) {
+        toast.error('Producto no encontrado');
+        navigate('/');
+      } else {
+        toast.error('Error al cargar producto');
+        navigate('/products');
+      }
     } finally {
       setLoading(false);
     }

@@ -81,6 +81,7 @@ class Product(BaseModel):
     image_transform: Optional[ImageTransform] = ImageTransform()  # Transformación de imagen principal
     images: Optional[List[ProductImage]] = []  # Nueva galería de imágenes
     category: Optional[str] = None
+    is_visible: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ProductCreate(BaseModel):
@@ -92,6 +93,7 @@ class ProductCreate(BaseModel):
     image_transform: Optional[ImageTransform] = ImageTransform()
     images: Optional[List[ProductImage]] = []
     category: Optional[str] = None
+    is_visible: bool = False
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
@@ -102,6 +104,7 @@ class ProductUpdate(BaseModel):
     image_transform: Optional[ImageTransform] = None
     images: Optional[List[ProductImage]] = None
     category: Optional[str] = None
+    is_visible: Optional[bool] = None
 
 class PurchaseRequest(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -377,23 +380,43 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
 # ==================== PRODUCT ROUTES ====================
 
 @api_router.get("/products", response_model=List[Product])
-async def get_products():
+async def get_products(request: Request, include_hidden: bool = False):
     """Get all products"""
-    products = await db.get_collection("products").find({}, {"_id": 0}).to_list(1000)
+    query = {}
+    
+    is_admin = False
+    if include_hidden:
+        user = await get_current_user(request)
+        if user and user.role == "admin":
+            is_admin = True
+            
+    if not is_admin:
+        query = {"$or": [{"is_visible": True}, {"is_visible": {"$exists": False}}]}
+        
+    products = await db.get_collection("products").find(query, {"_id": 0}).to_list(1000)
     
     for product in products:
         if isinstance(product.get('created_at'), str):
             product['created_at'] = datetime.fromisoformat(product['created_at'])
+        if 'is_visible' not in product:
+            product['is_visible'] = True
     
     return products
 
 @api_router.get("/products/{product_id}", response_model=Product)
-async def get_product(product_id: str):
+async def get_product(product_id: str, request: Request):
     """Get product by ID"""
     product = await db.get_collection("products").find_one({"id": product_id}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
+    # Check visibility
+    is_visible = product.get("is_visible", True)
+    if not is_visible:
+        user = await get_current_user(request)
+        if not user or user.role != "admin":
+            raise HTTPException(status_code=404, detail="Producto no encontrado")
+
     if isinstance(product.get('created_at'), str):
         product['created_at'] = datetime.fromisoformat(product['created_at'])
     
