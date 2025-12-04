@@ -8,9 +8,94 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Package, Plus, Edit, Trash2, Mail, Phone, ShoppingCart, AlertCircle, FileText, TrendingUp, Inbox, Upload, X, ZoomIn, ZoomOut, RotateCcw, Check, CheckCircle2, Video, Eye, EyeOff, ExternalLink } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, Mail, Phone, ShoppingCart, AlertCircle, FileText, TrendingUp, Inbox, Upload, X, ZoomIn, ZoomOut, RotateCcw, Check, CheckCircle2, Video, Eye, EyeOff, ExternalLink, GripVertical } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+const SortableProductCard = ({ product, handleEditProduct, handleDeleteProduct }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: product.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <Card className="overflow-hidden h-full flex flex-col" data-testid={`admin-product-card-${product.id}`}>
+        <div className="aspect-square bg-gradient-to-br from-sky-100 to-emerald-100 relative group cursor-move">
+          {product.image_url ? (
+            <img src={product.image_url} alt={product.name} className={`w-full h-full object-cover ${!product.is_visible ? 'opacity-50' : ''}`} />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Package className="w-16 h-16 text-sky-300" />
+            </div>
+          )}
+          {!product.is_visible && (
+            <div className="absolute top-2 right-2 bg-gray-900/80 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+              <EyeOff className="w-3 h-3" />
+              Oculto
+            </div>
+          )}
+          <div className="absolute top-2 left-2 bg-white/80 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+            <GripVertical className="w-4 h-4 text-gray-600" />
+          </div>
+        </div>
+        <CardContent className="p-4 flex-1 flex flex-col">
+          <h3 className="font-bold text-lg mb-1" data-testid={`admin-product-name-${product.id}`}>{product.name}</h3>
+          <p className="text-sm text-gray-600 mb-2 line-clamp-2 flex-1">{product.description}</p>
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-xl font-bold text-sky-600" data-testid={`admin-product-price-${product.id}`}>Lps {product.price.toFixed(2)}</span>
+            <span className="text-sm font-semibold" data-testid={`admin-product-stock-${product.id}`}>
+              Stock: <span className={product.stock === 0 ? 'text-red-600' : product.stock < 10 ? 'text-orange-600' : 'text-emerald-600'}>{product.stock}</span>
+            </span>
+          </div>
+          <div className="flex gap-2" onPointerDown={(e) => e.stopPropagation()}>
+            <Button
+              onClick={() => window.open(`/products/${product.id}`, '_blank')}
+              variant="outline"
+              size="icon"
+              title="Previsualizar"
+              className="flex-shrink-0"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </Button>
+            <Button
+              onClick={() => handleEditProduct(product)}
+              variant="outline"
+              className="flex-1"
+              data-testid={`edit-product-btn-${product.id}`}
+            >
+              <Edit className="w-4 h-4 mr-1" />
+              Editar
+            </Button>
+            <Button
+              onClick={() => handleDeleteProduct(product)}
+              variant="outline"
+              size="icon"
+              className="flex-shrink-0 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20"
+              data-testid={`delete-product-btn-${product.id}`}
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
 
 const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
   const navigate = useNavigate();
@@ -41,6 +126,40 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
   const [stockAmount, setStockAmount] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      setProducts((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        const newItems = arrayMove(items, oldIndex, newIndex);
+
+        // Save new order
+        const orderData = newItems.map((p, index) => ({
+          id: p.id,
+          display_order: index
+        }));
+
+        axiosInstance.put('/products/reorder', { items: orderData })
+          .then(() => toast.success('Orden actualizado'))
+          .catch((error) => {
+            console.error('Error al guardar el orden:', error.response?.data || error);
+            toast.error('Error al guardar el orden: ' + (error.response?.data?.detail || error.message));
+          });
+
+        return newItems;
+      });
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -428,66 +547,27 @@ const AdminDashboard = ({ user, logout, darkMode, toggleDarkMode }) => {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="admin-products-grid">
-              {products.map((product) => (
-                <Card key={product.id} className="overflow-hidden" data-testid={`admin-product-card-${product.id}`}>
-                  <div className="aspect-square bg-gradient-to-br from-sky-100 to-emerald-100 relative">
-                    {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} className={`w-full h-full object-cover ${!product.is_visible ? 'opacity-50' : ''}`} />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Package className="w-16 h-16 text-sky-300" />
-                      </div>
-                    )}
-                    {!product.is_visible && (
-                      <div className="absolute top-2 right-2 bg-gray-900/80 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
-                        <EyeOff className="w-3 h-3" />
-                        Oculto
-                      </div>
-                    )}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-bold text-lg mb-1" data-testid={`admin-product-name-${product.id}`}>{product.name}</h3>
-                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-xl font-bold text-sky-600" data-testid={`admin-product-price-${product.id}`}>Lps {product.price.toFixed(2)}</span>
-                      <span className="text-sm font-semibold" data-testid={`admin-product-stock-${product.id}`}>
-                        Stock: <span className={product.stock === 0 ? 'text-red-600' : product.stock < 10 ? 'text-orange-600' : 'text-emerald-600'}>{product.stock}</span>
-                      </span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => window.open(`/products/${product.id}`, '_blank')}
-                        variant="outline"
-                        size="icon"
-                        title="Previsualizar"
-                        className="flex-shrink-0"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        onClick={() => handleEditProduct(product)}
-                        variant="outline"
-                        className="flex-1"
-                        data-testid={`edit-product-btn-${product.id}`}
-                      >
-                        <Edit className="w-4 h-4 mr-1" />
-                        Editar
-                      </Button>
-                      <Button
-                        onClick={() => handleDeleteProduct(product)}
-                        variant="outline"
-                        size="icon"
-                        className="flex-shrink-0 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20"
-                        data-testid={`delete-product-btn-${product.id}`}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={products.map(p => p.id)}
+                strategy={rectSortingStrategy}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="admin-products-grid">
+                  {products.map((product) => (
+                    <SortableProductCard
+                      key={product.id}
+                      product={product}
+                      handleEditProduct={handleEditProduct}
+                      handleDeleteProduct={handleDeleteProduct}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
           </TabsContent>
 
           {/* Stock Management Tab */}

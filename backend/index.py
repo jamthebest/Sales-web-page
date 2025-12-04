@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request, BackgroundTasks, UploadFile, File, Form
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request, BackgroundTasks, UploadFile, File, Form, Body
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
@@ -82,6 +82,7 @@ class Product(BaseModel):
     images: Optional[List[ProductImage]] = []  # Nueva galería de imágenes
     category: Optional[str] = None
     is_visible: bool = False
+    display_order: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ProductCreate(BaseModel):
@@ -94,6 +95,7 @@ class ProductCreate(BaseModel):
     images: Optional[List[ProductImage]] = []
     category: Optional[str] = None
     is_visible: bool = False
+    display_order: int = 0
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
@@ -105,6 +107,7 @@ class ProductUpdate(BaseModel):
     images: Optional[List[ProductImage]] = None
     category: Optional[str] = None
     is_visible: Optional[bool] = None
+    display_order: Optional[int] = None
 
 class PurchaseRequest(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -393,7 +396,7 @@ async def get_products(request: Request, include_hidden: bool = False):
     if not is_admin:
         query = {"$or": [{"is_visible": True}, {"is_visible": {"$exists": False}}]}
         
-    products = await db.get_collection("products").find(query, {"_id": 0}).to_list(1000)
+    products = await db.get_collection("products").find(query, {"_id": 0}).sort("display_order", 1).to_list(1000)
     
     for product in products:
         if isinstance(product.get('created_at'), str):
@@ -427,12 +430,47 @@ async def create_product(product_data: ProductCreate, request: Request):
     """Create product (admin only)"""
     await require_admin(request)
     
+    # Calculate display order
+    if product_data.display_order == 0:
+        # Find max display_order
+        max_order_product = await db.get_collection("products").find_one(sort=[("display_order", -1)])
+        if max_order_product and "display_order" in max_order_product:
+            product_data.display_order = max_order_product["display_order"] + 1
+        else:
+            product_data.display_order = 0
+
     product = Product(**product_data.model_dump())
     product_doc = product.model_dump()
     product_doc['created_at'] = product_doc['created_at'].isoformat()
     
     await db.get_collection("products").insert_one(product_doc)
     return product
+
+class ProductReorderItem(BaseModel):
+    id: str
+    display_order: int
+
+class ProductReorderRequest(BaseModel):
+    items: List[ProductReorderItem]
+
+@api_router.put("/products/reorder")
+async def reorder_products(data: ProductReorderRequest, request: Request):
+    """Reorder products (admin only)"""
+    await require_admin(request)
+    
+    from pymongo import UpdateOne
+    
+    operations = []
+    for item in data.items:
+        operations.append(
+            UpdateOne({"id": item.id}, {"$set": {"display_order": item.display_order}})
+        )
+    
+    if operations:
+        await db.get_collection("products").bulk_write(operations)
+        
+    return {"message": "Orden actualizado"}
+
 
 @api_router.put("/products/{product_id}", response_model=Product)
 async def update_product(product_id: str, product_data: ProductUpdate, request: Request):
