@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Search, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
+import { includesIgnoreAccents } from '@/utils/textUtils';
 
 const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
   const navigate = useNavigate();
@@ -21,9 +22,9 @@ const Products = ({ user, logout, darkMode, toggleDarkMode }) => {
   useEffect(() => {
     if (searchTerm) {
       const filtered = products.filter(p =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (p.category && p.category.toLowerCase().includes(searchTerm.toLowerCase()))
+        includesIgnoreAccents(p.name, searchTerm) ||
+        includesIgnoreAccents(p.description, searchTerm) ||
+        (p.category && includesIgnoreAccents(p.category, searchTerm))
       );
       setFilteredProducts(filtered);
     } else {
